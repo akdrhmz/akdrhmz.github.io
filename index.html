@@ -24,11 +24,16 @@
                     },
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
+                        'marquee': 'marquee 30s linear infinite',
                     },
                     keyframes: {
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-10px)' },
+                        },
+                        marquee: {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(-100%)' },
                         }
                     }
                 }
@@ -95,6 +100,12 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Active Filter Button Style */
+        .filter-btn.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
     </style>
 </head>
 <body class="bg-dark text-slate-300 antialiased selection:bg-primary selection:text-white overflow-x-hidden" x-data="{ mobileMenuOpen: false }">
@@ -118,15 +129,28 @@
                     <a href="#reviews" class="text-sm font-medium hover:text-white transition-colors">İncelemeler</a>
                     <a href="#about" class="text-sm font-medium hover:text-white transition-colors">Hakkımda</a>
                 </div>
+
+                <!-- Mobile Menu Button (Hamburger) -->
+                <div class="-mr-2 flex md:hidden">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="bg-surface inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-white/10 focus:outline-none" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Menüyü aç</span>
+                        <svg :class="{'hidden': mobileMenuOpen, 'block': !mobileMenuOpen }" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg :class="{'block': mobileMenuOpen, 'hidden': !mobileMenuOpen }" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Mobile Menu -->
-        <div x-show="mobileMenuOpen" class="md:hidden bg-dark border-t border-slate-800 p-4">
-            <a href="#home" class="block py-2 text-white font-bold">Ana Sayfa</a>
-            <a href="#last-minute" class="block py-2 text-slate-400">Son Dakika</a>
-            <a href="#reviews" class="block py-2 text-slate-400">İncelemeler</a>
-            <a href="#about" class="block py-2 text-slate-400">Hakkımda</a>
+        <div x-show="mobileMenuOpen" class="md:hidden bg-dark border-t border-slate-800 p-4" id="mobile-menu">
+            <a href="#home" @click="mobileMenuOpen = false" class="block py-2 text-white font-bold hover:bg-white/5 rounded px-2">Ana Sayfa</a>
+            <a href="#last-minute" @click="mobileMenuOpen = false" class="block py-2 text-slate-400 hover:text-white hover:bg-white/5 rounded px-2">Son Dakika</a>
+            <a href="#reviews" @click="mobileMenuOpen = false" class="block py-2 text-slate-400 hover:text-white hover:bg-white/5 rounded px-2">İncelemeler</a>
+            <a href="#about" @click="mobileMenuOpen = false" class="block py-2 text-slate-400 hover:text-white hover:bg-white/5 rounded px-2">Hakkımda</a>
         </div>
     </nav>
 
@@ -181,15 +205,21 @@
 
         <!-- Tech Ticker (Last Minute) -->
         <div id="last-minute" class="border-y border-white/5 bg-white/[0.02] py-4 mb-16 overflow-hidden scroll-mt-24">
-            <div class="max-w-7xl mx-auto flex items-center gap-4 px-4">
+            <div class="max-w-7xl mx-auto flex items-center gap-4 px-4 overflow-hidden">
                 <span class="text-red-500 font-bold uppercase text-xs tracking-widest whitespace-nowrap animate-pulse">SON DAKİKA</span>
-                <div class="flex gap-8 animate-marquee whitespace-nowrap text-sm text-slate-400 font-mono">
-                    <span class="text-white font-bold">> Bitcoin: $98,000 Seviyesini Zorluyor</span>
-                    <span class="text-white font-bold">> NVIDIA: RTX 5090 Özellikleri Sızdırıldı - 32GB VRAM!</span>
-                    <span class="text-white font-bold">> OpenAI: GPT-5 "Yazın Gelebilir" Dedikoduları</span>
-                    <span class="text-white font-bold">> Apple: Vision Pro 2 İçin Yeni Patent Başvurusu</span>
-                    <span class="text-white font-bold">> Linux: Kernel 6.14 ile Rust Entegrasyonu Hızlanıyor</span>
-                    <span class="text-white font-bold">> Google: Gemini 1.5 Pro Artık Herkese Açık</span>
+                <div class="flex-1 overflow-hidden relative">
+                    <div class="flex gap-8 animate-marquee whitespace-nowrap text-sm text-slate-400 font-mono">
+                        <span class="text-white font-bold">> Bitcoin: $98,000 Seviyesini Zorluyor</span>
+                        <span class="text-white font-bold">> NVIDIA: RTX 5090 Özellikleri Sızdırıldı - 32GB VRAM!</span>
+                        <span class="text-white font-bold">> OpenAI: GPT-5 "Yazın Gelebilir" Dedikoduları</span>
+                        <span class="text-white font-bold">> Apple: Vision Pro 2 İçin Yeni Patent Başvurusu</span>
+                        <span class="text-white font-bold">> Linux: Kernel 6.14 ile Rust Entegrasyonu Hızlanıyor</span>
+                        <span class="text-white font-bold">> Google: Gemini 1.5 Pro Artık Herkese Açık</span>
+                        <!-- Duplicate content for seamless loop -->
+                        <span class="text-white font-bold pl-8">> Bitcoin: $98,000 Seviyesini Zorluyor</span>
+                        <span class="text-white font-bold">> NVIDIA: RTX 5090 Özellikleri Sızdırıldı - 32GB VRAM!</span>
+                        <span class="text-white font-bold">> OpenAI: GPT-5 "Yazın Gelebilir" Dedikoduları</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -245,15 +275,15 @@
             <div class="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
                 <h2 class="text-3xl font-bold text-white">Son Yazılar</h2>
                 <div class="flex gap-2">
-                    <button class="px-4 py-2 text-sm rounded-full bg-white/10 text-white hover:bg-white/20 transition-all">Hepsi</button>
-                    <button class="px-4 py-2 text-sm rounded-full text-slate-400 hover:text-white transition-all">Yapay Zeka</button>
-                    <button class="px-4 py-2 text-sm rounded-full text-slate-400 hover:text-white transition-all">Donanım</button>
+                    <button onclick="filterPosts('all')" id="btn-all" class="filter-btn px-4 py-2 text-sm rounded-full bg-white/10 text-white hover:bg-white/20 transition-all">Hepsi</button>
+                    <button onclick="filterPosts('yapay-zeka')" id="btn-ai" class="filter-btn px-4 py-2 text-sm rounded-full text-slate-400 hover:text-white transition-all">Yapay Zeka</button>
+                    <button onclick="filterPosts('donanim')" id="btn-hw" class="filter-btn px-4 py-2 text-sm rounded-full text-slate-400 hover:text-white transition-all">Donanım</button>
                 </div>
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Blog Card 1 -->
-                <article class="group reveal">
+                <article class="group reveal" data-category="yapay-zeka">
                     <div class="relative h-56 rounded-xl overflow-hidden mb-4">
                         <img src="https://loremflickr.com/800/600/game,ai?1" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         <div class="absolute top-4 left-4">
@@ -270,7 +300,7 @@
                 </article>
 
                 <!-- Blog Card 2 -->
-                <article class="group reveal">
+                <article class="group reveal" data-category="donanim">
                     <div class="relative h-56 rounded-xl overflow-hidden mb-4">
                         <img src="https://loremflickr.com/800/600/server,cloud?2" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         <div class="absolute top-4 left-4">
@@ -287,7 +317,7 @@
                 </article>
 
                 <!-- Blog Card 3 -->
-                <article class="group reveal">
+                <article class="group reveal" data-category="oyun">
                     <div class="relative h-56 rounded-xl overflow-hidden mb-4">
                         <img src="https://loremflickr.com/800/600/console,playstation?3" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         <div class="absolute top-4 left-4">
@@ -304,7 +334,7 @@
                 </article>
 
                 <!-- Blog Card 4 -->
-                <article class="group reveal">
+                <article class="group reveal" data-category="guvenlik">
                     <div class="relative h-56 rounded-xl overflow-hidden mb-4">
                         <img src="https://loremflickr.com/800/600/hacker,security?4" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         <div class="absolute top-4 left-4">
@@ -321,7 +351,7 @@
                 </article>
 
                 <!-- Blog Card 5 -->
-                <article class="group reveal">
+                <article class="group reveal" data-category="otomotiv">
                     <div class="relative h-56 rounded-xl overflow-hidden mb-4">
                         <img src="https://loremflickr.com/800/600/car,autonomous?5" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         <div class="absolute top-4 left-4">
@@ -338,7 +368,7 @@
                 </article>
 
                 <!-- Blog Card 6 -->
-                <article class="group reveal">
+                <article class="group reveal" data-category="donanim">
                     <div class="relative h-56 rounded-xl overflow-hidden mb-4">
                         <img src="https://loremflickr.com/800/600/chip,circuit?6" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         <div class="absolute top-4 left-4">
@@ -379,7 +409,7 @@
                         </div>
                         <h3 class="text-xl font-bold text-white mb-2 leading-tight">Apple Vision Pro</h3>
                         <p class="text-slate-400 text-sm mb-4 line-clamp-2">Mekansal bilgisayar çağı başladı mı? 2 haftalık yoğun kullanım sonrası artılar ve eksiler.</p>
-                        <a href="blog/yazi1.html" class="inline-block text-white text-sm font-bold border-b border-primary pb-0.5 hover:text-primary transition-colors">İncelemeyi Oku</a>
+                        <a href="#" class="inline-block text-white text-sm font-bold border-b border-primary pb-0.5 hover:text-primary transition-colors" onclick="alert('İnceleme yakında!')">İncelemeyi Oku</a>
                     </div>
                 </div>
                 
@@ -397,7 +427,7 @@
                         </div>
                         <h3 class="text-xl font-bold text-white mb-2 leading-tight">Rabbit R1</h3>
                         <p class="text-slate-400 text-sm mb-4 line-clamp-2">Uygulamaları yok etmeyi vaat eden turuncu kutu. Gerçekten telefonun yerini alabilir mi?</p>
-                        <a href="blog/yazi2.html" class="inline-block text-white text-sm font-bold border-b border-primary pb-0.5 hover:text-primary transition-colors">İncelemeyi Oku</a>
+                        <a href="#" class="inline-block text-white text-sm font-bold border-b border-primary pb-0.5 hover:text-primary transition-colors" onclick="alert('İnceleme yakında!')">İncelemeyi Oku</a>
                     </div>
                 </div>
                 
@@ -415,7 +445,7 @@
                         </div>
                         <h3 class="text-xl font-bold text-white mb-2 leading-tight">Framework Laptop 16</h3>
                         <p class="text-slate-400 text-sm mb-4 line-clamp-2">Tamir edilebilir, yükseltilebilir ve şimdi grafik kartı destekli. Bir mühendislik harikası.</p>
-                        <a href="blog/yazi3.html" class="inline-block text-white text-sm font-bold border-b border-primary pb-0.5 hover:text-primary transition-colors">İncelemeyi Oku</a>
+                        <a href="#" class="inline-block text-white text-sm font-bold border-b border-primary pb-0.5 hover:text-primary transition-colors" onclick="alert('İnceleme yakında!')">İncelemeyi Oku</a>
                     </div>
                 </div>
             </div>
@@ -520,6 +550,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Reveal Animation Observer
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -529,7 +560,50 @@
             }, { threshold: 0.1 });
             
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+            
+            // Initialize Filter (Default: All)
+            filterPosts('all');
         });
+
+        // Filter Function
+        function filterPosts(category) {
+            const articles = document.querySelectorAll('#latest-posts article');
+            const buttons = document.querySelectorAll('.filter-btn');
+
+            // Reset buttons
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-white/10', 'text-white');
+                btn.classList.add('text-slate-400');
+            });
+
+            // Activate current button
+            // Finding the specific button based on category would be cleaner with IDs, 
+            // but here we can just update the clicked one if passed as event, 
+            // or we manually map it. Let's do simple mapping by text content or ID if we added them.
+            // I added IDs: btn-all, btn-ai, btn-hw
+            
+            let activeBtnId = 'btn-all';
+            if(category === 'yapay-zeka') activeBtnId = 'btn-ai';
+            if(category === 'donanim') activeBtnId = 'btn-hw';
+            
+            const activeBtn = document.getElementById(activeBtnId);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-slate-400');
+                activeBtn.classList.add('bg-white/10', 'text-white');
+            }
+
+            // Filter logic
+            articles.forEach(article => {
+                if (category === 'all' || article.getAttribute('data-category') === category) {
+                    article.style.display = 'block';
+                    // Re-trigger animation if needed
+                    setTimeout(() => article.classList.add('active'), 50);
+                } else {
+                    article.style.display = 'none';
+                    article.classList.remove('active');
+                }
+            });
+        }
     </script>
 </body>
 </html>
