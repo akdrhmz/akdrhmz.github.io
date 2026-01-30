@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kadir.AI | Geleceği Keşfet</title>
-    <meta name="description" content="Yapay Zeka, Teknoloji ve Gelecek üzerine kişisel blog ve portfolyo.">
+    <title>Kadir.AI | Geleceğin Teknoloji Haberleri</title>
+    <meta name="description" content="Yapay Zeka, Teknoloji ve Gelecek üzerine son dakika haberler, analizler ve incelemeler.">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -12,68 +12,83 @@
             theme: {
                 extend: {
                     colors: {
-                        dark: '#030712', /* Deeper dark */
-                        surface: '#111827',
+                        dark: '#0a0a0a', /* Pitch black for better contrast */
+                        surface: '#171717',
                         primary: '#6366f1', /* Indigo */
-                        secondary: '#a855f7', /* Purple */
-                        accent: '#22d3ee', /* Cyan */
+                        secondary: '#ec4899', /* Pinkish for variety */
+                        accent: '#06b6d4', /* Cyan */
                     },
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'], /* For editorial feel in body text */
                     },
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' },
+                            '50%': { transform: 'translateY(-10px)' },
                         }
                     }
                 }
             }
         }
     </script>
-    <!-- Modern Font: Plus Jakarta Sans for a more techy feel -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Alpine.js for lightweight interactivity -->
+    <!-- Modern Font: Plus Jakarta Sans for UI, Merriweather for reading -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         
         .gradient-text {
-            background: linear-gradient(135deg, #6366f1, #a855f7, #22d3ee);
+            background: linear-gradient(135deg, #6366f1, #ec4899);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         
         .glass-nav {
-            background: rgba(3, 7, 18, 0.6);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .glass-card {
-            background: rgba(17, 24, 39, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            background: rgba(23, 23, 23, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
         }
 
         .glass-card:hover {
-            background: rgba(31, 41, 55, 0.7);
-            border-color: rgba(99, 102, 241, 0.2);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+            border-color: rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.2);
         }
 
-        /* Smooth reveal animation classes */
+        /* News Portal Grids */
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (min-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 2fr 1fr;
+                grid-template-rows: 500px;
+            }
+        }
+
+        .image-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%);
+        }
+
         .reveal {
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
         }
         
         .reveal.active {
@@ -85,623 +100,435 @@
 <body class="bg-dark text-slate-300 antialiased selection:bg-primary selection:text-white overflow-x-hidden" x-data="{ mobileMenuOpen: false }">
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 glass-nav transition-all duration-300">
+    <nav class="fixed w-full z-50 glass-nav">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer group">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-all">
+                    <div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-white font-black text-xl">
                         K
                     </div>
-                    <span class="text-2xl font-bold text-white tracking-tight group-hover:text-primary transition-colors duration-300">Kadir<span class="text-primary">.AI</span></span>
+                    <span class="text-xl font-bold text-white tracking-tight">Kadir<span class="text-primary">.AI</span> <span class="text-xs text-slate-500 font-normal ml-2 hidden sm:inline-block">TECH NEWS</span></span>
                 </div>
                 
                 <!-- Desktop Menu -->
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-center space-x-8">
-                        <a href="#home" class="text-sm font-medium hover:text-white transition-colors relative group">
-                            Ana Sayfa
-                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                        </a>
-                        <a href="#about" class="text-sm font-medium hover:text-white transition-colors relative group">
-                            Hakkımda
-                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                        </a>
-                        <a href="#blog" class="text-sm font-medium hover:text-white transition-colors relative group">
-                            Blog
-                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                        </a>
-                        <a href="#contact" class="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white text-sm font-medium border border-white/10 hover:border-primary/50 transition-all shadow-lg hover:shadow-primary/20">
-                            İletişim
-                        </a>
-                    </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-sm font-semibold text-white hover:text-primary transition-colors">Ana Sayfa</a>
+                    <a href="#latest" class="text-sm font-medium hover:text-white transition-colors">Son Dakika</a>
+                    <a href="#reviews" class="text-sm font-medium hover:text-white transition-colors">İncelemeler</a>
+                    <a href="#about" class="text-sm font-medium hover:text-white transition-colors">Hakkımda</a>
+                    <button class="text-slate-400 hover:text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </button>
                 </div>
 
-                <!-- Mobile menu button -->
+                <!-- Mobile Menu Button -->
                 <div class="md:hidden">
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="text-gray-400 hover:text-white focus:outline-none p-2">
-                        <svg class="h-6 w-6" x-show="!mobileMenuOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                        <svg class="h-6 w-6" x-show="mobileMenuOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-white p-2">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Mobile Menu -->
-        <div x-show="mobileMenuOpen" 
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 -translate-y-2"
-             x-transition:enter-end="opacity-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100 translate-y-0"
-             x-transition:leave-end="opacity-0 -translate-y-2"
-             class="md:hidden glass-nav border-t border-slate-800" style="display: none;">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#home" @click="mobileMenuOpen = false" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Ana Sayfa</a>
-                <a href="#about" @click="mobileMenuOpen = false" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Hakkımda</a>
-                <a href="#blog" @click="mobileMenuOpen = false" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Blog</a>
-                <a href="#contact" @click="mobileMenuOpen = false" class="text-primary font-bold block px-3 py-2 rounded-md text-base">İletişim</a>
-            </div>
+        <div x-show="mobileMenuOpen" class="md:hidden bg-dark border-t border-slate-800 p-4">
+            <a href="#home" class="block py-2 text-white font-bold">Ana Sayfa</a>
+            <a href="#latest" class="block py-2 text-slate-400">Son Dakika</a>
+            <a href="#reviews" class="block py-2 text-slate-400">İncelemeler</a>
+            <a href="#about" class="block py-2 text-slate-400">Hakkımda</a>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
-        <!-- Abstract Background -->
-        <div class="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
-            <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] animate-pulse-slow"></div>
-            <div class="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[120px] animate-pulse-slow" style="animation-delay: 2s;"></div>
-            <div class="absolute top-[40%] left-[60%] w-[300px] h-[300px] bg-accent/10 rounded-full blur-[100px] animate-float"></div>
-        </div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="flex flex-col items-center text-center">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-primary text-sm font-medium mb-8 backdrop-blur-sm reveal">
-                    <span class="relative flex h-2 w-2">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                    </span>
-                    AI & Yazılım Geliştirme
+    <!-- Main Content -->
+    <main class="pt-24 pb-20">
+        
+        <!-- Hero News Section -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+            <div class="hero-grid">
+                <!-- Main Feature Story -->
+                <div class="relative group overflow-hidden rounded-xl bg-surface">
+                    <img src="https://loremflickr.com/1200/800/artificial-intelligence,code" alt="Featured" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100">
+                    <div class="absolute inset-0 image-overlay flex flex-col justify-end p-8">
+                        <span class="inline-block px-3 py-1 mb-4 text-xs font-bold text-white bg-primary rounded w-fit">MANŞET</span>
+                        <h1 class="text-3xl md:text-5xl font-bold text-white mb-2 leading-tight group-hover:text-primary transition-colors">
+                            Yapay Zeka Devrimi: Kodlamanın Sonu mu?
+                        </h1>
+                        <p class="text-slate-300 text-lg line-clamp-2 mb-4">
+                            Claude 3.7 ve yeni nesil modeller, yazılım geliştirme süreçlerini kökten değiştiriyor. Artık "prompt" yeni "syntax" mı?
+                        </p>
+                        <div class="flex items-center gap-4 text-sm text-slate-400">
+                            <span>Kadir Demir</span>
+                            <span>•</span>
+                            <span>10 Mart 2024</span>
+                        </div>
+                    </div>
                 </div>
-                
-                <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-8 tracking-tight reveal" style="transition-delay: 100ms;">
-                    Geleceği <br class="hidden md:block" />
-                    <span class="gradient-text">Kodluyoruz.</span>
-                </h1>
-                
-                <p class="mt-2 max-w-2xl mx-auto text-lg md:text-xl text-slate-400 leading-relaxed reveal" style="transition-delay: 200ms;">
-                    Merhaba, ben Kadir. Yapay zeka, veri bilimi ve modern web teknolojileri ile dijital dünyada iz bırakıyorum. Karmaşık problemleri zarif çözümlere dönüştürüyorum.
-                </p>
-                
-                <div class="mt-10 flex flex-col sm:flex-row gap-4 w-full sm:w-auto reveal" style="transition-delay: 300ms;">
-                    <a href="#about" class="px-8 py-4 rounded-full bg-white text-dark font-bold hover:bg-slate-200 transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-                        Projelerimi Gör
+
+                <!-- Side Stories (Trending) -->
+                <div class="flex flex-col gap-4">
+                    <!-- Story 1 -->
+                    <a href="#blog" class="flex-1 relative rounded-xl overflow-hidden group">
+                        <img src="https://loremflickr.com/800/600/robot" alt="News" class="absolute inset-0 w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/60 group-hover:bg-black/50 transition-colors"></div>
+                        <div class="absolute bottom-0 p-5">
+                            <span class="text-primary text-xs font-bold uppercase tracking-wider">Robotik</span>
+                            <h3 class="text-xl font-bold text-white leading-tight mt-1 group-hover:underline">Waymo ve Tesla: Otonom Sürüş Savaşı Kızışıyor</h3>
+                        </div>
                     </a>
-                    <a href="#blog" class="px-8 py-4 rounded-full glass-card text-white font-bold hover:bg-white/5 transition-all transform hover:scale-105 border border-white/10">
-                        Blog Yazılarım
+                    <!-- Story 2 -->
+                    <a href="#blog" class="flex-1 relative rounded-xl overflow-hidden group">
+                        <img src="https://loremflickr.com/800/600/chip,processor" alt="News" class="absolute inset-0 w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/60 group-hover:bg-black/50 transition-colors"></div>
+                        <div class="absolute bottom-0 p-5">
+                            <span class="text-secondary text-xs font-bold uppercase tracking-wider">Donanım</span>
+                            <h3 class="text-xl font-bold text-white leading-tight mt-1 group-hover:underline">RISC-V: Intel ve ARM'ın Kabusu mu?</h3>
+                        </div>
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Scroll Indicator -->
-        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-slate-500">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        <!-- Tech Ticker -->
+        <div class="border-y border-white/5 bg-white/[0.02] py-4 mb-16 overflow-hidden">
+            <div class="max-w-7xl mx-auto flex items-center gap-4 px-4">
+                <span class="text-red-500 font-bold uppercase text-xs tracking-widest whitespace-nowrap animate-pulse">Canlı Akış</span>
+                <div class="flex gap-8 animate-marquee whitespace-nowrap text-sm text-slate-400 font-mono">
+                    <span>> Bitcoin: $98,000</span>
+                    <span>> NVIDIA: Yeni GPU Mimarisi Sızdırıldı</span>
+                    <span>> OpenAI: GPT-5 Beklentileri</span>
+                    <span>> Apple: Vision Pro 2 Ertelendi</span>
+                    <span>> Linux: Kernel 6.14 Yayınlandı</span>
+                </div>
+            </div>
         </div>
-    </section>
 
-    <!-- Tech Marquee -->
-    <div class="py-10 border-y border-white/5 bg-white/[0.02] overflow-hidden">
-        <div class="flex gap-12 animate-marquee whitespace-nowrap justify-center flex-wrap px-4">
-             <span class="text-xl font-semibold text-slate-500 hover:text-primary transition-colors cursor-default">Python</span>
-             <span class="text-xl font-semibold text-slate-500 hover:text-primary transition-colors cursor-default">TensorFlow</span>
-             <span class="text-xl font-semibold text-slate-500 hover:text-primary transition-colors cursor-default">PyTorch</span>
-             <span class="text-xl font-semibold text-slate-500 hover:text-primary transition-colors cursor-default">React</span>
-             <span class="text-xl font-semibold text-slate-500 hover:text-primary transition-colors cursor-default">Node.js</span>
-             <span class="text-xl font-semibold text-slate-500 hover:text-primary transition-colors cursor-default">Docker</span>
-             <span class="text-xl font-semibold text-slate-500 hover:text-primary transition-colors cursor-default">AWS</span>
-             <span class="text-xl font-semibold text-slate-500 hover:text-primary transition-colors cursor-default">NLP</span>
-        </div>
-    </div>
-
-    <!-- About Section -->
-    <section id="about" class="py-32 relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="lg:grid lg:grid-cols-2 lg:gap-20 items-center">
-                <div class="relative reveal order-2 lg:order-1">
-                    <!-- Code Editor Look -->
-                    <div class="relative glass-card rounded-xl overflow-hidden shadow-2xl">
-                        <div class="flex items-center px-4 py-3 bg-white/5 border-b border-white/5">
-                            <div class="flex space-x-2">
-                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+        <!-- Featured Section: Günün Görseli / Tech Spotlight -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 reveal">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                    <span class="w-2 h-8 bg-accent rounded-full"></span>
+                    Günün Teknolojisi
+                </h2>
+                <span class="text-slate-500 text-sm">Her gün yeni bir keşif</span>
+            </div>
+            
+            <div class="glass-card rounded-2xl p-1 md:p-2 bg-gradient-to-br from-surface to-dark">
+                <div class="grid md:grid-cols-2 gap-8 items-center p-6 md:p-8">
+                    <div class="order-2 md:order-1">
+                        <span class="text-accent font-bold tracking-wider text-sm mb-2 block">EDİTÖRÜN SEÇİMİ</span>
+                        <h3 class="text-3xl font-bold text-white mb-4">Boston Dynamics: Atlas</h3>
+                        <p class="text-slate-400 mb-6 leading-relaxed">
+                            Artık hidrolik yok, tamamen elektrikli. Yeni Atlas, insansı robotların sınırlarını zorluyor. Daha güçlü, daha çevik ve ürkütücü derecede yetenekli.
+                        </p>
+                        
+                        <div class="flex gap-4 mb-6">
+                            <div class="text-center px-4 py-2 bg-white/5 rounded-lg border border-white/5">
+                                <span class="block text-2xl font-bold text-white">360°</span>
+                                <span class="text-xs text-slate-500">Hareket</span>
                             </div>
-                            <div class="ml-4 text-xs text-slate-500 font-mono">kadir_config.json</div>
+                            <div class="text-center px-4 py-2 bg-white/5 rounded-lg border border-white/5">
+                                <span class="block text-2xl font-bold text-white">Elektrik</span>
+                                <span class="text-xs text-slate-500">Motor</span>
+                            </div>
                         </div>
-                        <div class="p-6 overflow-x-auto">
-                            <pre class="font-mono text-sm leading-relaxed">
-<span class="text-purple-400">const</span> <span class="text-yellow-200">developer</span> = {
-  <span class="text-blue-300">name</span>: <span class="text-green-400">"Kadir"</span>,
-  <span class="text-blue-300">role</span>: <span class="text-green-400">"AI Engineer & Full Stack Dev"</span>,
-  <span class="text-blue-300">focus</span>: [
-    <span class="text-green-400">"Large Language Models"</span>, 
-    <span class="text-green-400">"Scalable Systems"</span>,
-    <span class="text-green-400">"User Experience"</span>
-  ],
-  <span class="text-blue-300">motivation</span>: <span class="text-green-400">"Building the future, one line of code at a time."</span>,
-  <span class="text-blue-300">coffeeLevel</span>: <span class="text-orange-400">Infinity</span>
-};</pre>
-                        </div>
+
+                        <a href="#" class="inline-flex items-center text-white font-semibold hover:text-accent transition-colors">
+                            İncelemeyi Oku
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </a>
                     </div>
-                    
-                    <!-- Decorative blobs behind -->
-                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-primary/30 rounded-full blur-[60px] -z-10"></div>
-                    <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-secondary/30 rounded-full blur-[60px] -z-10"></div>
-                </div>
-                
-                <div class="mb-16 lg:mb-0 reveal order-1 lg:order-2">
-                    <h2 class="text-3xl md:text-5xl font-bold text-white mb-8">
-                        Teknoloji ile <br><span class="text-primary">Sanatın Kesişimi</span>
-                    </h2>
-                    <div class="space-y-6 text-slate-400 text-lg leading-relaxed">
-                        <p>
-                            Teknolojiyi sadece kodlardan ibaret görmüyorum. Benim için yazılım, modern dünyanın sanatıdır. Her algoritma bir fırça darbesi, her proje bir başyapıt potansiyeli taşır.
-                        </p>
-                        <p>
-                            Yapay zeka devriminin tam ortasında, veriyi anlamlı içgörülere dönüştürerek iş süreçlerini optimize ediyor ve hayatı kolaylaştıran çözümler üretiyorum.
-                        </p>
-                        <ul class="space-y-3 mt-4">
-                            <li class="flex items-center gap-3">
-                                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary">✓</span>
-                                <span>Modern & Ölçeklenebilir Mimariler</span>
-                            </li>
-                            <li class="flex items-center gap-3">
-                                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary">✓</span>
-                                <span>Yapay Zeka Entegrasyonları</span>
-                            </li>
-                            <li class="flex items-center gap-3">
-                                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary">✓</span>
-                                <span>Kullanıcı Odaklı Tasarım</span>
-                            </li>
-                        </ul>
+                    <div class="order-1 md:order-2 relative h-80 rounded-xl overflow-hidden group cursor-pointer">
+                        <img src="https://loremflickr.com/800/600/robot,atlas" alt="Atlas Robot" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                        <div class="absolute bottom-4 right-4 bg-white/10 backdrop-blur-md px-3 py-1 rounded text-xs text-white border border-white/10">
+                            Fotoğraf: Boston Dynamics
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Blog Section -->
-    <section id="blog" class="py-32 bg-surface/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal">
-                <div>
-                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Düşünceler & Yazılar</h2>
-                    <p class="text-slate-400 max-w-xl">
-                        Teknoloji dünyasındaki son gelişmeler, kişisel deneyimler ve gelecek öngörülerim.
-                    </p>
+        <!-- Main Blog Grid -->
+        <section id="latest" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
+            <div class="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
+                <h2 class="text-3xl font-bold text-white">Son Yazılar</h2>
+                <div class="flex gap-2">
+                    <button class="px-4 py-2 text-sm rounded-full bg-white/10 text-white hover:bg-white/20 transition-all">Hepsi</button>
+                    <button class="px-4 py-2 text-sm rounded-full text-slate-400 hover:text-white transition-all">Yapay Zeka</button>
+                    <button class="px-4 py-2 text-sm rounded-full text-slate-400 hover:text-white transition-all">Donanım</button>
                 </div>
-                <a href="#" class="hidden md:flex items-center text-primary hover:text-white transition-colors mt-4 md:mt-0">
-                    Tüm Yazıları Gör 
-                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                </a>
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-                <!-- Blog Card: Google Project Genie: Sonsuz Dünyalar Yaratmak -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">Yapay Zeka</span>
+                
+                <!-- Blog Card 1 -->
+                <article class="group reveal">
+                    <div class="relative h-56 rounded-xl overflow-hidden mb-4">
+                        <img src="https://loremflickr.com/800/600/game,ai?1" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 text-xs font-bold bg-primary text-white rounded-md shadow-lg">Yapay Zeka</span>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Bugün • 5 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">Google Project Genie: Sonsuz Dünyalar Yaratmak</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            Google'ın yeni AI modeli, basit görselleri oynanabilir, sonsuz etkileşimli dünyalara dönüştürüyor.
-                        </p>
-                        <a href="blog/yazi1.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
-                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2 leading-snug group-hover:text-primary transition-colors">
+                        <a href="blog/yazi1.html">Google Project Genie: Sonsuz Dünyalar Yaratmak</a>
+                    </h3>
+                    <p class="text-slate-400 text-sm line-clamp-2 mb-3">
+                        Google'ın yeni AI modeli, basit görselleri oynanabilir, sonsuz etkileşimli dünyalara dönüştürüyor.
+                    </p>
+                    <span class="text-xs text-slate-500 font-mono">5 dk okuma • Bugün</span>
                 </article>
 
-                <!-- Blog Card: RAM Kıtlığı: Küçük Hosting Firmaları Neden Batıyor? -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">Donanım</span>
+                <!-- Blog Card 2 -->
+                <article class="group reveal">
+                    <div class="relative h-56 rounded-xl overflow-hidden mb-4">
+                        <img src="https://loremflickr.com/800/600/server,cloud?2" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 text-xs font-bold bg-secondary text-white rounded-md shadow-lg">Donanım</span>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Bu Hafta • 6 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">RAM Kıtlığı: Küçük Hosting Firmaları Neden Batıyor?</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            DDR5'e geçiş ve yapay zeka sunucularının devasa bellek talebi, küçük VPS sağlayıcılarını zorluyor.
-                        </p>
-                        <a href="blog/yazi2.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
-                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2 leading-snug group-hover:text-primary transition-colors">
+                        <a href="blog/yazi2.html">RAM Kıtlığı: Küçük Hosting Firmaları Neden Batıyor?</a>
+                    </h3>
+                    <p class="text-slate-400 text-sm line-clamp-2 mb-3">
+                        DDR5'e geçiş ve yapay zeka sunucularının devasa bellek talebi, küçük VPS sağlayıcılarını zorluyor.
+                    </p>
+                    <span class="text-xs text-slate-500 font-mono">6 dk okuma • Bu Hafta</span>
                 </article>
 
-                <!-- Blog Card: PS2 Recompilation: Emülasyonda Yeni Bir Dönem -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">Oyun Teknolojileri</span>
+                <!-- Blog Card 3 -->
+                <article class="group reveal">
+                    <div class="relative h-56 rounded-xl overflow-hidden mb-4">
+                        <img src="https://loremflickr.com/800/600/console,playstation?3" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 text-xs font-bold bg-purple-600 text-white rounded-md shadow-lg">Oyun</span>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Dün • 7 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">PS2 Recompilation: Emülasyonda Yeni Bir Dönem</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            Statik recompilation yöntemiyle PlayStation 2 oyunları, PC'ye 'native' uygulama gibi portlanabiliyor.
-                        </p>
-                        <a href="blog/yazi3.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
-                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2 leading-snug group-hover:text-primary transition-colors">
+                        <a href="blog/yazi3.html">PS2 Recompilation: Emülasyonda Yeni Bir Dönem</a>
+                    </h3>
+                    <p class="text-slate-400 text-sm line-clamp-2 mb-3">
+                        Statik recompilation yöntemiyle PlayStation 2 oyunları, PC'ye 'native' uygulama gibi portlanabiliyor.
+                    </p>
+                    <span class="text-xs text-slate-500 font-mono">7 dk okuma • Dün</span>
                 </article>
 
-                <!-- Blog Card: CISA Skandalı: Siber Güvenlik Başkanı ChatGPT Kurbanı Oldu -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">Siber Güvenlik</span>
+                <!-- Blog Card 4 -->
+                <article class="group reveal">
+                    <div class="relative h-56 rounded-xl overflow-hidden mb-4">
+                        <img src="https://loremflickr.com/800/600/hacker,security?4" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 text-xs font-bold bg-red-600 text-white rounded-md shadow-lg">Güvenlik</span>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Bugün • 5 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">CISA Skandalı: Siber Güvenlik Başkanı ChatGPT Kurbanı Oldu</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            ABD'nin siber savunma ajansı CISA'nın yetkilisi, hassas devlet verilerini yanlışlıkla halka açık AI'ya yükledi.
-                        </p>
-                        <a href="blog/yazi4.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
-                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2 leading-snug group-hover:text-primary transition-colors">
+                        <a href="blog/yazi4.html">CISA Skandalı: Siber Güvenlik Başkanı ChatGPT Kurbanı</a>
+                    </h3>
+                    <p class="text-slate-400 text-sm line-clamp-2 mb-3">
+                        Hassas devlet verilerini yanlışlıkla halka açık AI'ya yükleyen yetkililer zor durumda.
+                    </p>
+                    <span class="text-xs text-slate-500 font-mono">5 dk okuma • Bugün</span>
                 </article>
 
-                <!-- Blog Card: Waymo Robotaksi Kazası: Güvenlik Tartışmaları Alevlendi -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">Otonom Araçlar</span>
+                <!-- Blog Card 5 -->
+                <article class="group reveal">
+                    <div class="relative h-56 rounded-xl overflow-hidden mb-4">
+                        <img src="https://loremflickr.com/800/600/car,autonomous?5" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 text-xs font-bold bg-blue-500 text-white rounded-md shadow-lg">Otomotiv</span>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Dün • 6 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">Waymo Robotaksi Kazası: Güvenlik Tartışmaları Alevlendi</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            Santa Monica'da bir ilkokulun yakınında çocuğa çarpan Waymo aracı, otonom sürüş karşıtlarını haklı mı çıkarıyor?
-                        </p>
-                        <a href="blog/yazi5.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
-                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2 leading-snug group-hover:text-primary transition-colors">
+                        <a href="blog/yazi5.html">Waymo Robotaksi Kazası: Güvenlik Tartışmaları</a>
+                    </h3>
+                    <p class="text-slate-400 text-sm line-clamp-2 mb-3">
+                        Santa Monica'da yaşanan kaza, otonom araçların geleceğini nasıl etkileyecek?
+                    </p>
+                    <span class="text-xs text-slate-500 font-mono">6 dk okuma • Dün</span>
                 </article>
 
-                <!-- Blog Card: RISC-V Yükseliyor: Box64 Desteği Genişliyor -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">Açık Kaynak</span>
+                <!-- Blog Card 6 -->
+                <article class="group reveal">
+                    <div class="relative h-56 rounded-xl overflow-hidden mb-4">
+                        <img src="https://loremflickr.com/800/600/chip,circuit?6" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 text-xs font-bold bg-green-600 text-white rounded-md shadow-lg">Donanım</span>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Bu Hafta • 5 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">RISC-V Yükseliyor: Box64 Desteği Genişliyor</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            x86 uygulamalarını ARM ve RISC-V üzerinde çalıştıran Box64 emülatörü, şimdi Çinli LoongArch işlemcilerini de destekliyor.
-                        </p>
-                        <a href="blog/yazi6.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
+                    <h3 class="text-xl font-bold text-white mb-2 leading-snug group-hover:text-primary transition-colors">
+                        <a href="blog/yazi6.html">RISC-V Yükseliyor: Box64 Desteği Genişliyor</a>
+                    </h3>
+                    <p class="text-slate-400 text-sm line-clamp-2 mb-3">
+                        x86 emülasyonu artık Çinli LoongArch işlemcilerini de destekliyor.
+                    </p>
+                    <span class="text-xs text-slate-500 font-mono">5 dk okuma • Bu Hafta</span>
+                </article>
+                
+                <!-- Blog Card 7 -->
+                <article class="group reveal">
+                    <div class="relative h-56 rounded-xl overflow-hidden mb-4">
+                        <img src="https://loremflickr.com/800/600/database,code?7" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 text-xs font-bold bg-indigo-500 text-white rounded-md shadow-lg">Yazılım</span>
+                        </div>
                     </div>
+                    <h3 class="text-xl font-bold text-white mb-2 leading-snug group-hover:text-primary transition-colors">
+                        <a href="blog/yazi7.html">Turso: SQLite'ın Rust ile Yeniden Doğuşu</a>
+                    </h3>
+                    <p class="text-slate-400 text-sm line-clamp-2 mb-3">
+                        Dünyanın en popüler veritabanı modern bulut çağına uyarlanıyor.
+                    </p>
+                    <span class="text-xs text-slate-500 font-mono">6 dk okuma • Bugün</span>
                 </article>
 
-                <!-- Blog Card: Turso: SQLite'ın Rust ile Yeniden Doğuşu -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">Yazılım Geliştirme</span>
+                <!-- Blog Card 8 -->
+                <article class="group reveal">
+                    <div class="relative h-56 rounded-xl overflow-hidden mb-4">
+                        <img src="https://loremflickr.com/800/600/ai,code?8" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 text-xs font-bold bg-primary text-white rounded-md shadow-lg">AI</span>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Bugün • 6 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">Turso: SQLite'ın Rust ile Yeniden Doğuşu</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            Dünyanın en çok kullanılan veritabanı SQLite, 'libSQL' projesiyle modern bulut çağına uyarlanıyor.
-                        </p>
-                        <a href="blog/yazi7.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
+                    <h3 class="text-xl font-bold text-white mb-2 leading-snug group-hover:text-primary transition-colors">
+                        <a href="blog/yazi8.html">Claude Code: Yapay Zeka Kodlamada Yeni Zirve</a>
+                    </h3>
+                    <p class="text-slate-400 text-sm line-clamp-2 mb-3">
+                        GPT-4'e rakip olan Claude, kodlama yetenekleriyle dikkat çekiyor.
+                    </p>
+                    <span class="text-xs text-slate-500 font-mono">5 dk okuma • Bu Hafta</span>
+                </article>
+                
+                 <!-- Blog Card 9 -->
+                <article class="group reveal">
+                    <div class="relative h-56 rounded-xl overflow-hidden mb-4">
+                        <img src="https://loremflickr.com/800/600/server,network?9" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 text-xs font-bold bg-orange-500 text-white rounded-md shadow-lg">Araçlar</span>
+                        </div>
                     </div>
+                    <h3 class="text-xl font-bold text-white mb-2 leading-snug group-hover:text-primary transition-colors">
+                        <a href="blog/yazi9.html">Moltworker: Kişisel AI Ajanınızı Barındırın</a>
+                    </h3>
+                    <p class="text-slate-400 text-sm line-clamp-2 mb-3">
+                        Cloudflare üzerinde çalışan açık kaynaklı AI asistanı.
+                    </p>
+                    <span class="text-xs text-slate-500 font-mono">4 dk okuma • Dün</span>
+                </article>
+                
+                 <!-- Blog Card 10 -->
+                <article class="group reveal">
+                    <div class="relative h-56 rounded-xl overflow-hidden mb-4">
+                        <img src="https://loremflickr.com/800/600/law,court?10" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 text-xs font-bold bg-red-800 text-white rounded-md shadow-lg">Hukuk</span>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2 leading-snug group-hover:text-primary transition-colors">
+                        <a href="blog/yazi10.html">Adalet Yerini Buldu: Pentester Tazminatı</a>
+                    </h3>
+                    <p class="text-slate-400 text-sm line-clamp-2 mb-3">
+                        Güvenlik testi yaparken tutuklanan uzmanlar davayı kazandı.
+                    </p>
+                    <span class="text-xs text-slate-500 font-mono">5 dk okuma • Bugün</span>
                 </article>
 
-                <!-- Blog Card: Claude Code: Yapay Zeka Kodlamada Yeni Zirve -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">Yapay Zeka</span>
+                 <!-- Blog Card 11 -->
+                <article class="group reveal">
+                    <div class="relative h-56 rounded-xl overflow-hidden mb-4">
+                        <img src="https://loremflickr.com/800/600/science,dna?11" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 text-xs font-bold bg-teal-600 text-white rounded-md shadow-lg">Sağlık</span>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Bu Hafta • 5 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">Claude Code: Yapay Zeka Kodlamada Yeni Zirve</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            Anthropic'in Claude modelleri, kodlama benchmarklarında GPT-4'ü zorlamaya devam ediyor. Peki 'bozulma' var mı?
-                        </p>
-                        <a href="blog/yazi8.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
-                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2 leading-snug group-hover:text-primary transition-colors">
+                        <a href="blog/yazi11.html">Kanser Tedavisinde Umut Veren Gelişme</a>
+                    </h3>
+                    <p class="text-slate-400 text-sm line-clamp-2 mb-3">
+                        Üçlü ilaç kombinasyonu tümör direncini kırmayı başardı.
+                    </p>
+                    <span class="text-xs text-slate-500 font-mono">5 dk okuma • Bu Hafta</span>
                 </article>
 
-                <!-- Blog Card: Moltworker: Kendi Kişisel AI Ajanınızı Barındırın -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">AI Araçları</span>
+                 <!-- Blog Card 12 -->
+                <article class="group reveal">
+                    <div class="relative h-56 rounded-xl overflow-hidden mb-4">
+                        <img src="https://loremflickr.com/800/600/3dprinter,tech?12" alt="Blog Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 text-xs font-bold bg-yellow-600 text-white rounded-md shadow-lg">Maker</span>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Dün • 4 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">Moltworker: Kendi Kişisel AI Ajanınızı Barındırın</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            Cloudflare üzerinde çalışan, açık kaynaklı ve kendi kendine yeten bir AI asistanı projesi.
-                        </p>
-                        <a href="blog/yazi9.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
-                    </div>
-                </article>
-
-                <!-- Blog Card: Adalet Yerini Buldu: Pentesterlara 600 Bin Dolar Tazminat -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">Hukuk & Teknoloji</span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Bugün • 5 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">Adalet Yerini Buldu: Pentesterlara 600 Bin Dolar Tazminat</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            Bir adliyenin güvenliğini test ederken tutuklanan siber güvenlikçiler, uzun hukuk mücadelesini kazandı.
-                        </p>
-                        <a href="blog/yazi10.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
-                    </div>
-                </article>
-
-                <!-- Blog Card: Kanser Tedavisinde Umut: Üçlü İlaç Kombinasyonu -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">Bilim & Sağlık</span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Bu Hafta • 5 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">Kanser Tedavisinde Umut: Üçlü İlaç Kombinasyonu</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            En ölümcül türlerden pankreas kanserinde tümör direncini kıran yeni bir yöntem keşfedildi.
-                        </p>
-                        <a href="blog/yazi11.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
-                    </div>
-                </article>
-
-                <!-- Blog Card: Grid.space: Tarayıcıda 3D Yazıcı Kontrolü -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">Maker Kültürü</span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Bugün • 4 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">Grid.space: Tarayıcıda 3D Yazıcı Kontrolü</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            Kurulum yok, bulut zorunluluğu yok. Tamamen tarayıcıda çalışan yerel öncelikli 'Slicer' yazılımı.
-                        </p>
-                        <a href="blog/yazi12.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
-                    </div>
-                </article>
-
-                <!-- Blog Card: DeepSeek Etkisi: Annem ve Dr. AI -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">Toplum & AI</span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Bu Hafta • 6 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">DeepSeek Etkisi: Annem ve Dr. AI</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            Çin menşeli DeepSeek modeli, uygun maliyeti ve başarısıyla günlük kullanıcıların (ve annelerimizin) hayatına girdi.
-                        </p>
-                        <a href="blog/yazi13.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
-                    </div>
-                </article>
-
-                <!-- Blog Card: Sadece Yağmurda Çalışan Wi-Fi: Bir Debugging Destanı -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">Mühendislik Hikayeleri</span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Dün • 8 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">Sadece Yağmurda Çalışan Wi-Fi: Bir Debugging Destanı</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            Tuhaf bir teknik sorunun altından çıkan inanılmaz sebep. Mühendislikte 'asla olmaz' demeyin.
-                        </p>
-                        <a href="blog/yazi14.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
-                    </div>
-                </article>
-
-                <!-- Blog Card: AI-Proof Yazı: İnsan Olduğumuzu Nasıl Kanıtlarız? -->
-                <article class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-2 transition-transform duration-300 reveal">
-                    <div class="h-48 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-primary/20 text-primary border border-primary/20 rounded-full">Gelecek Öngörüleri</span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <div class="text-slate-500 text-xs mb-3">Bugün • 5 dk okuma</div>
-                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">AI-Proof Yazı: İnsan Olduğumuzu Nasıl Kanıtlarız?</h3>
-                        <p class="text-slate-400 text-sm mb-4 line-clamp-3">
-                            Auth-Auth gibi yeni araçlar, metnin bir insan tarafından yazıldığını kanıtlamaya çalışıyor. Turing testi tersine mi dönüyor?
-                        </p>
-                        <a href="blog/yazi15.html" class="text-sm font-semibold text-white group-hover:text-primary flex items-center transition-colors">
-                            Okumaya Devam Et
-                            <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
-                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2 leading-snug group-hover:text-primary transition-colors">
+                        <a href="blog/yazi12.html">Grid.space: Tarayıcıda 3D Yazıcı Kontrolü</a>
+                    </h3>
+                    <p class="text-slate-400 text-sm line-clamp-2 mb-3">
+                        Bulut zorunluluğu olmayan yerel öncelikli slicer yazılımı.
+                    </p>
+                    <span class="text-xs text-slate-500 font-mono">4 dk okuma • Bugün</span>
                 </article>
             </div>
-            <div class="mt-8 text-center md:hidden">
-                <a href="#" class="inline-flex items-center text-primary font-medium hover:text-white transition-colors">
-                    Tüm Yazıları Gör 
-                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                </a>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Call to Action -->
-    <section class="py-24 relative overflow-hidden">
-        <div class="absolute inset-0 bg-primary/10"></div>
-        <div class="absolute -top-24 -right-24 w-96 h-96 bg-primary/20 rounded-full blur-[100px]"></div>
-        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-secondary/20 rounded-full blur-[100px]"></div>
-        
-        <div class="max-w-4xl mx-auto px-4 text-center relative z-10 reveal">
-            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">Bir sonraki projenizi <br>birlikte hayata geçirelim.</h2>
-            <p class="text-slate-400 text-lg mb-10 max-w-2xl mx-auto">
-                Fikirlerinizi dinlemek ve teknolojik çözümlerle değer katmak için buradayım. Kahve eşliğinde bir tanışma toplantısına ne dersiniz?
-            </p>
-            <a href="mailto:contact@kadir.ai" class="inline-block px-10 py-4 rounded-full bg-white text-dark font-bold text-lg hover:bg-slate-200 transition-all transform hover:scale-105 shadow-xl shadow-white/10">
-                Bana Ulaşın
-            </a>
-        </div>
-    </section>
+        <!-- Newsletter / About Compact -->
+        <section class="bg-surface border-y border-white/5 py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-3xl font-bold mx-auto mb-6 shadow-2xl shadow-primary/20">K</div>
+                <h2 class="text-3xl font-bold text-white mb-4">Haber Bültenine Katılın</h2>
+                <p class="text-slate-400 max-w-xl mx-auto mb-8">
+                    Teknoloji dünyasındaki en önemli gelişmeleri haftalık olarak özetleyip kutunuza bırakıyoruz. Spam yok, sadece bilgi.
+                </p>
+                <form class="max-w-md mx-auto flex gap-2">
+                    <input type="email" placeholder="E-posta adresiniz" class="flex-1 bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors">
+                    <button type="button" class="bg-white text-dark font-bold px-6 py-3 rounded-lg hover:bg-slate-200 transition-colors">Abone Ol</button>
+                </form>
+            </div>
+        </section>
+
+    </main>
 
     <!-- Footer -->
-    <footer id="contact" class="bg-black border-t border-slate-800 pt-16 pb-8">
+    <footer class="bg-dark border-t border-slate-900 pt-16 pb-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-12 mb-12">
                 <div class="col-span-1 md:col-span-2">
                     <span class="text-2xl font-bold text-white tracking-tight mb-4 block">Kadir<span class="text-primary">.AI</span></span>
                     <p class="text-slate-500 max-w-xs">
-                        Teknoloji, tasarım ve inovasyonun kesişim noktasında, geleceği bugünden inşa ediyoruz.
+                        Geleceği kodlayanların buluşma noktası.
                     </p>
                 </div>
                 <div>
-                    <h4 class="text-white font-semibold mb-4">Hızlı Erişim</h4>
-                    <ul class="space-y-2 text-slate-500">
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-wider">Site Haritası</h4>
+                    <ul class="space-y-2 text-slate-500 text-sm">
                         <li><a href="#home" class="hover:text-primary transition-colors">Ana Sayfa</a></li>
+                        <li><a href="#latest" class="hover:text-primary transition-colors">Son Haberler</a></li>
                         <li><a href="#about" class="hover:text-primary transition-colors">Hakkımda</a></li>
-                        <li><a href="#blog" class="hover:text-primary transition-colors">Blog</a></li>
-                        <li><a href="#" class="hover:text-primary transition-colors">Projeler</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-white font-semibold mb-4">Sosyal Medya</h4>
-                    <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-all">
-                            <span class="sr-only">GitHub</span>
-                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/></svg>
-                        </a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-all">
-                            <span class="sr-only">Twitter</span>
-                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/></svg>
-                        </a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-all">
-                            <span class="sr-only">LinkedIn</span>
-                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd"/></svg>
-                        </a>
-                    </div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-wider">Sosyal</h4>
+                    <ul class="space-y-2 text-slate-500 text-sm">
+                        <li><a href="#" class="hover:text-primary transition-colors">Twitter / X</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">GitHub</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">LinkedIn</a></li>
+                    </ul>
                 </div>
             </div>
-            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-slate-600 text-sm">© 2024 Kadir.AI. Tüm hakları saklıdır.</p>
-                <div class="flex space-x-6 mt-4 md:mt-0">
-                    <a href="#" class="text-slate-600 hover:text-white text-sm transition-colors">Gizlilik Politikası</a>
-                    <a href="#" class="text-slate-600 hover:text-white text-sm transition-colors">Kullanım Şartları</a>
-                </div>
+            <div class="border-t border-slate-900 pt-8 text-center text-slate-600 text-sm">
+                &copy; 2024 Kadir.AI. Tüm hakları saklıdır.
             </div>
         </div>
     </footer>
 
-    <!-- Scroll Reveal Script -->
     <script>
-        // Simple Intersection Observer for scroll animations
         document.addEventListener('DOMContentLoaded', () => {
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1
-            };
-
-            const observer = new IntersectionObserver((entries, observer) => {
+            const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('active');
-                        observer.unobserve(entry.target);
                     }
                 });
-            }, observerOptions);
-
-            document.querySelectorAll('.reveal').forEach(el => {
-                observer.observe(el);
-            });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         });
     </script>
 </body>
