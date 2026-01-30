@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Füzyon Enerjisi: Temiz Enerjinin Kutsal Kasesi | Kadir.AI Blog</title>
+    <meta name="description" content="Nükleer atık üretmeyen, sınırsız enerji kaynağına ne kadar yakınız?">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#030712',
+                        surface: '#111827',
+                        primary: '#6366f1',
+                        secondary: '#a855f7',
+                        accent: '#22d3ee',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #6366f1, #a855f7, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass-nav {
+            background: rgba(3, 7, 18, 0.6);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-card {
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .glass-card:hover {
+            background: rgba(31, 41, 55, 0.7);
+            border-color: rgba(99, 102, 241, 0.2);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+        }
+        .prose h2 { color: #fff; font-size: 1.5rem; font-weight: 700; margin-top: 2rem; margin-bottom: 1rem; }
+        .prose p { color: #94a3b8; margin-bottom: 1.5rem; line-height: 1.75; }
+        .prose ul { list-style-type: disc; padding-left: 1.5rem; color: #94a3b8; margin-bottom: 1.5rem; }
+        .prose li { margin-bottom: 0.5rem; }
+        .prose a { color: #22d3ee; text-decoration: underline; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body class="bg-dark text-slate-300 antialiased selection:bg-primary selection:text-white overflow-x-hidden" x-data="{ mobileMenuOpen: false }">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="../index.html" class="flex-shrink-0 flex items-center gap-2 cursor-pointer group">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-all">
+                        K
+                    </div>
+                    <span class="text-2xl font-bold text-white tracking-tight group-hover:text-primary transition-colors duration-300">Kadir<span class="text-primary">.AI</span></span>
+                </a>
+                
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-center space-x-8">
+                        <a href="../index.html#home" class="text-sm font-medium hover:text-white transition-colors">Ana Sayfa</a>
+                        <a href="../index.html#about" class="text-sm font-medium hover:text-white transition-colors">Hakkımda</a>
+                        <a href="../index.html#blog" class="text-sm font-medium text-primary">Blog</a>
+                        <a href="../index.html#contact" class="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white text-sm font-medium border border-white/10 hover:border-primary/50 transition-all shadow-lg hover:shadow-primary/20">İletişim</a>
+                    </div>
+                </div>
+
+                <div class="md:hidden">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="text-gray-400 hover:text-white focus:outline-none p-2">
+                        <svg class="h-6 w-6" x-show="!mobileMenuOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg class="h-6 w-6" x-show="mobileMenuOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div x-show="mobileMenuOpen" class="md:hidden glass-nav border-t border-slate-800" style="display: none;">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="../index.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Ana Sayfa</a>
+                <a href="../index.html#blog" class="text-primary font-bold block px-3 py-2 rounded-md text-base">Blog</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-32 pb-20 relative min-h-screen">
+        <!-- Background Effects -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+            <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[120px]"></div>
+        </div>
+
+        <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-12 reveal">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs font-semibold mb-6">
+                    Yeşil Teknoloji
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                    Füzyon Enerjisi: Temiz Enerjinin Kutsal Kasesi
+                </h1>
+                <div class="flex items-center justify-center gap-4 text-slate-400 text-sm">
+                    <span>02 Ekim 2024</span>
+                    <span>•</span>
+                    <span>5 dk okuma</span>
+                </div>
+            </div>
+
+            <!-- Content Card -->
+            <div class="glass-card rounded-2xl p-8 md:p-12 reveal" style="transition-delay: 100ms;">
+                <div class="prose prose-invert max-w-none">
+                    
+        <p class="text-lg text-slate-300 font-medium mb-8">Yıldızların enerjisini dünyada üretmek. Nükleer füzyon, fisyonun aksine tehlikeli atık bırakmıyor ve yakıtı (hidrojen izotopları) okyanuslarda bolca var.</p>
+        
+        <h2>Net Enerji Kazancı</h2>
+        <p>2022'de ABD'deki Lawrence Livermore Ulusal Laboratuvarı, ilk kez reaksiyonu başlatmak için harcanan enerjiden daha fazlasını üretti (Net Gain). Bu, fiziksel olarak mümkün olduğunu kanıtladı. Şimdi mühendislik sorunu: Bunu ticari olarak verimli bir santrale dönüştürmek.</p>
+        
+        <h2>ITER ve Özel Girişimler</h2>
+        <p>Fransa'daki devasa ITER projesi yavaş ilerlerken, özel şirketler (Helion, Commonwealth Fusion Systems) daha küçük ve çevik reaktörlerle yarışıyor. 2030'larda ilk pilot santralleri görebiliriz.</p>
+        
+                </div>
+
+                <!-- References -->
+                <div class="mt-12 pt-8 border-t border-white/10">
+                    <h3 class="text-lg font-semibold text-white mb-4">Kaynaklar & İleri Okuma</h3>
+                    <ul class="space-y-2">
+                        <li><a href='https://www.iter.org/' target='_blank'>ITER Project</a></li>
+<li><a href='https://www.nature.com/articles/d41586-022-04437-w' target='_blank'>Nature - Fusion Breakthrough</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between mt-12">
+                <a href="../index.html#blog" class="text-slate-400 hover:text-white transition-colors flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    Blog'a Dön
+                </a>
+                <a href="yazi9.html" class="text-primary hover:text-white transition-colors flex items-center gap-2">
+                    Sonraki Yazı
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+            </div>
+        </article>
+    </main>
+
+    <footer class="bg-black border-t border-slate-800 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <span class="text-2xl font-bold text-white tracking-tight mb-4 block">Kadir<span class="text-primary">.AI</span></span>
+                <p class="text-slate-600 text-sm">© 2024 Kadir.AI. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>
