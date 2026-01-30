@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sürekli Öğrenme: Hıza Yetişmek | Kadir.Dev</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f172a',
+                        primary: '#3b82f6',
+                        secondary: '#8b5cf6',
+                        accent: '#06b6d4',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(to right, #8b5cf6, #d946ef, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        article p { margin-bottom: 1.5rem; line-height: 1.8; color: #94a3b8; }
+        article h2 { font-size: 1.875rem; font-weight: 700; color: #fff; margin-top: 3rem; margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body class="bg-dark text-slate-300 antialiased selection:bg-secondary selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-card border-b-0 border-b-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="index.html" class="text-2xl font-bold text-white tracking-tighter">KADİR<span class="text-primary">.</span>DEV</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html#home" class="hover:text-white transition-colors px-3 py-2 rounded-md text-sm font-medium">Ana Sayfa</a>
+                        <a href="index.html#blog" class="hover:text-white transition-colors px-3 py-2 rounded-md text-sm font-medium">Blog</a>
+                        <a href="index.html#contact" class="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium transition-all shadow-lg shadow-blue-500/30">İletişim</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Image -->
+    <div class="w-full h-[50vh] bg-gradient-to-br from-purple-900 to-slate-900 relative flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-30"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-dark"></div>
+        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto mt-16">
+            <span class="bg-purple-500/20 text-purple-300 text-sm font-bold px-3 py-1 rounded-full border border-purple-500/30 mb-6 inline-block">Gelişim</span>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight leading-tight">
+                Sürekli Öğrenme: Hıza Yetişmek
+            </h1>
+            <div class="flex items-center justify-center text-slate-400 text-sm">
+                <span>28 Eylül 2024</span>
+                <span class="mx-3">•</span>
+                <span>4 dk okuma</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 -mt-20 relative z-20">
+        <article class="glass-card p-8 md:p-12 rounded-2xl shadow-2xl">
+            <p class="text-xl text-slate-200 font-medium border-l-4 border-secondary pl-6 italic mb-10">
+                "Teknolojinin yarı ömrü artık aylarla ölçülüyor. Dün öğrendiğimiz framework bugün eskiyor. Peki bu hızla nasıl başa çıkacağız? Cevap 'her şeyi bilmekte' değil, 'nasıl öğreneceğini bilmekte' yatıyor."
+            </p>
+
+            <p>
+                Alvin Toffler'ın ünlü sözü günümüzde hiç olmadığı kadar geçerli: "21. yüzyılın cahilleri okuma yazma bilmeyenler değil; öğrenmeyen, unutan ve yeniden öğrenmeyenler olacaktır." Teknoloji dünyasında "durmak", geriye gitmekle eşdeğerdir. Peki, bu amansız yarışta tükenmeden nasıl ayakta kalabiliriz?
+            </p>
+
+            <h2>Mikro-Öğrenme ve Odaklanma</h2>
+            <p>
+                Geleneksel eğitim modelleri "her şeyi baştan sona öğrenme" üzerine kuruludur. Ancak modern dünyada buna vakit yok. Bunun yerine "Just-in-Time Learning" (Tam Zamanında Öğrenme) yaklaşımı ön plana çıkıyor. Bir problemi çözerken ihtiyaç duyduğunuz bilgi parçasını o an öğrenmek ve uygulamak, bilgiyi kalıcı hale getirmenin en etkili yoludur. Küçük, sindirilebilir bilgi parçacıklarıyla ilerlemek, devasa dökümantasyonların altında ezilmekten iyidir.
+            </p>
+
+            <h2>Unutmayı Öğrenmek (Unlearning)</h2>
+            <p>
+                Bazen yeni bir şeyler inşa etmek için eskileri yıkmak gerekir. Alışkanlıklarımız, eski yöntemlerimiz ve "biz hep böyle yapardık" zihniyeti, gelişimin önündeki en büyük engel olabilir. Python 2'den 3'e geçmek sadece bir syntax değişimi değil, bir zihniyet değişimidir. Değişime direnmek yerine, eski bilginin ne zaman miadını doldurduğunu fark edip onu bırakabilmek kritik bir beceridir.
+            </p>
+            
+            <div class="my-10 p-6 bg-purple-900/20 border border-purple-500/20 rounded-xl">
+                <h3 class="text-lg font-bold text-purple-300 mb-2">T-Şekilli İnsan Olmak</h3>
+                <p class="mb-0 text-slate-300">
+                    Geniş bir alanda genel kültüre (T'nin yatay çizgisi) ve en az bir alanda derinlemesine uzmanlığa (T'nin dikey çizgisi) sahip olmak, modern kariyerin altın anahtarıdır.
+                </p>
+            </div>
+
+            <h2>Merak: En Büyük Yakıtımız</h2>
+            <p>
+                Zorunluluktan öğrenmek yorucudur, meraktan öğrenmek ise oyundur. Çocuksu merakımızı koruyabildiğimiz sürece öğrenme süreci bir yük olmaktan çıkar. "Bu neden böyle?" sorusunu sormaktan asla vazgeçmemeliyiz. GitHub'da rastgele bir repoyu incelemek, farklı bir alandaki makaleyi okumak veya alakasız görünen iki konu arasında bağlantı kurmaya çalışmak zihni esnek tutar.
+            </p>
+
+            <h2>Sonuç</h2>
+            <p>
+                Sürekli öğrenme bir varış noktası değil, bir yaşam tarzıdır. Hıza yetişmeye çalışırken nefessiz kalmak yerine, kendi hızımızda ama istikrarlı adımlarla ilerlemeliyiz. Çünkü maratonu kazananlar en hızlı koşanlar değil, koşmayı hiç bırakmayanlardır.
+            </p>
+        </article>
+        
+        <div class="mt-12 text-center">
+            <a href="index.html#blog" class="inline-flex items-center px-6 py-3 border border-slate-700 rounded-full text-slate-300 hover:text-white hover:bg-slate-800 transition-all font-medium">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Blog'a Dön
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-black/40 border-t border-slate-800 py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+            <span class="text-2xl font-bold text-white tracking-tighter">KADİR<span class="text-primary">.</span>DEV</span>
+            <p class="text-slate-500 text-sm mt-2">© 2024 Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
