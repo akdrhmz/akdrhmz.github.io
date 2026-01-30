@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neuralink: İnsan ve Makine Birleşiyor mu? | Kadir.AI Blog</title>
-    <meta name="description" content="Beyin-bilgisayar arayüzleri (BCI) felçli hastalara umut olurken etik soruları da beraberinde getiriyor.">
+    <title>Turso: SQLite'ın Rust ile Yeniden Doğuşu | Kadir.AI Blog</title>
+    <meta name="description" content="Dünyanın en çok kullanılan veritabanı SQLite, 'libSQL' projesiyle modern bulut çağına uyarlanıyor.">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -114,53 +114,48 @@
     </nav>
 
     <main class="pt-32 pb-20 relative min-h-screen">
-        <!-- Background Effects -->
         <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
             <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]"></div>
             <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[120px]"></div>
         </div>
 
         <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Header -->
             <div class="text-center mb-12 reveal">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs font-semibold mb-6">
-                    Biyoteknoloji
+                    Yazılım Geliştirme
                 </div>
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                    Neuralink: İnsan ve Makine Birleşiyor mu?
+                    Turso: SQLite'ın Rust ile Yeniden Doğuşu
                 </h1>
                 <div class="flex items-center justify-center gap-4 text-slate-400 text-sm">
-                    <span>05 Ekim 2024</span>
+                    <span>Bugün</span>
                     <span>•</span>
                     <span>6 dk okuma</span>
                 </div>
             </div>
 
-            <!-- Content Card -->
             <div class="glass-card rounded-2xl p-8 md:p-12 reveal" style="transition-delay: 100ms;">
                 <div class="prose prose-invert max-w-none">
                     
-        <p class="text-lg text-slate-300 font-medium mb-8">Düşünce gücüyle bilgisayar faresi oynatmak bilim kurguydu, artık gerçek. Neuralink ve rakipleri (Synchron vb.), insan beynini dijital dünyaya doğrudan bağlamayı hedefliyor.</p>
+        <p class="text-lg text-slate-300 font-medium mb-8">SQLite harikadır ama "yerel" çalışır. Turso ekibi, SQLite'ı alıp Rust diliyle "fork"ladı ve ona dağıtık (distributed) özellikler kazandırdı. Sonuç: Edge computing için mükemmel bir veritabanı.</p>
         
-        <h2>Telepati ve Tedavi</h2>
-        <p>İlk hedef tıbbi: Felçli hastaların iletişim kurmasını sağlamak, körlüğü tedavi etmek. Ancak uzun vadeli vizyon, "insan zekasını yapay zeka ile birleştirerek" süper zekaya ulaşmak. Bant genişliği sorunu (beynimizden bilgisayara veri aktarım hızı) çözülürse, öğrenme ve iletişim hızımız katlanabilir.</p>
+        <h2>Neden Rust?</h2>
+        <p>Bellek güvenliği ve performans. C ile yazılmış orijinal SQLite zaten çok hızlıydı, ancak Rust modern güvenlik garantileri ve modülerlik sunuyor. Turso, verinizi kullanıcıya en yakın sunucuda (Edge) tutarak gecikmeyi milisaniyelere düşürüyor.</p>
         
-        <h2>Zihinsel Mahremiyet</h2>
-        <p>Beyninizden geçen verilerin bir şirket sunucusuna gitmesi fikri sizi korkutuyor mu? "Nöro-haklar" kavramı, Şili gibi ülkelerde anayasaya girmeye başladı bile. Zihnimiz, mahremiyetin son kalesi ve onu korumak zorundayız.</p>
+        <h2>Geliştirici Deneyimi (DX)</h2>
+        <p>Vercel veya Netlify gibi platformlarda proje geliştirenler için Turso, kurulumu saniyeler süren, yönetimi kolay bir çözüm sunuyor. SQL ölmedi, sadece şekil değiştirdi.</p>
         
                 </div>
 
-                <!-- References -->
                 <div class="mt-12 pt-8 border-t border-white/10">
                     <h3 class="text-lg font-semibold text-white mb-4">Kaynaklar & İleri Okuma</h3>
                     <ul class="space-y-2">
-                        <li><a href='https://neuralink.com/' target='_blank'>Neuralink</a></li>
-<li><a href='https://www.technologyreview.com/' target='_blank'>MIT Tech Review</a></li>
+                        <li><a href='https://kerkour.com/' target='_blank'>Sylvain Kerkour Blog</a></li>
+<li><a href='https://turso.tech/' target='_blank'>Turso Official</a></li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Navigation Buttons -->
             <div class="flex justify-between mt-12">
                 <a href="../index.html#blog" class="text-slate-400 hover:text-white transition-colors flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
@@ -168,7 +163,7 @@
                 </a>
                 <a href="yazi8.html" class="text-primary hover:text-white transition-colors flex items-center gap-2">
                     Sonraki Yazı
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7-7 7"></path></svg>
                 </a>
             </div>
         </article>
