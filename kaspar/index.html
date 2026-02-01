@@ -290,19 +290,23 @@
                 this.loadAdminData();
             }
             async loadAdminData() {
-                const res = await this.post('/admin/users', { role: 'engineer' });
                 const list = document.getElementById('admin-user-list');
-                let html = '<table><tr><th>User</th><th>Rol</th><th>Durum</th><th>İşlem</th></tr>';
-                res.users.forEach(u => {
-                    const status = u.is_approved ? '<span class="status-badge approved">Aktif</span>' : '<span class="status-badge pending">Bekliyor</span>';
-                    let actions = `<button class="btn btn-small" onclick="app.showResetPassword(${u.id}, '${u.username}')">🔑</button>`;
-                    if(!u.is_approved) actions += ` <button class="btn btn-small btn-green" onclick="app.approveUser(${u.id})">✅</button>`;
-                    actions += ` <button class="btn btn-small btn-red" onclick="app.deleteUser(${u.id})">🗑️</button>`;
+                list.innerHTML = 'Yükleniyor...';
+                try {
+                    const res = await this.post('/admin/users', { role: 'engineer' });
+                    if(res.status==='error') { list.innerHTML=res.message; return; }
                     
-                    html += `<tr><td>${u.username}</td><td>${u.role}</td><td>${status}</td><td>${actions}</td></tr>`;
-                });
-                html += '</table>';
-                list.innerHTML = html;
+                    let html = '<table><tr><th>User</th><th>Rol</th><th>Durum</th><th>İşlem</th></tr>';
+                    res.users.forEach(u => {
+                        const status = u.is_approved ? '<span class="status-badge approved">Aktif</span>' : '<span class="status-badge pending">Bekliyor</span>';
+                        let actions = `<button class="btn btn-small" onclick="app.showResetPassword(${u.id}, '${u.username}')">🔑</button>`;
+                        if(!u.is_approved) actions += ` <button class="btn btn-small btn-green" onclick="app.approveUser(${u.id})">✅</button>`;
+                        actions += ` <button class="btn btn-small btn-red" onclick="app.deleteUser(${u.id})">🗑️</button>`;
+                        html += `<tr><td>${u.username}</td><td>${u.role}</td><td>${status}</td><td>${actions}</td></tr>`;
+                    });
+                    html += '</table>';
+                    list.innerHTML = html;
+                } catch(e) { list.innerHTML = "Veri alınamadı."; }
             }
             async approveUser(id) { await this.post('/admin/approve', { user_id: id, role: 'engineer' }); this.loadAdminData(); }
             async deleteUser(id) { if(confirm('Silinsin mi?')) { await this.post('/admin/delete', { user_id: id, role: 'engineer' }); this.loadAdminData(); } }
