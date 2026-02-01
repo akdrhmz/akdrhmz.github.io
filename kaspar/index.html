@@ -9,464 +9,350 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root {
             --bg-color: #0f172a;
             --panel-bg: #1e293b;
             --accent-color: #38bdf8;
+            --accent-green: #22c55e;
             --text-color: #f8fafc;
-            --board-border: #334155;
         }
 
-        /* Mobil Optimize: Kaydırmayı engelle */
         html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color); color: var(--text-color);
             font-family: 'Segoe UI', system-ui, sans-serif;
-            touch-action: none; /* Tüm sayfada zoom/pan engelle */
-            overscroll-behavior: none;
+            overflow: hidden; touch-action: none; overscroll-behavior: none;
         }
 
-        .app-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        /* Header */
-        header {
-            padding: 10px 15px;
-            background: var(--panel-bg);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--board-border);
-            z-index: 10;
-        }
-
-        .brand { font-size: 1.2rem; font-weight: bold; color: var(--accent-color); display: flex; align-items: center; gap: 8px; }
-        .connection-dot { width: 10px; height: 10px; border-radius: 50%; background: #ef4444; display: inline-block; }
-        .online { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
-
-        /* Main Game Area */
-        .game-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-            gap: 15px;
-        }
-
-        .board-container {
-            width: 100%;
-            aspect-ratio: 1;
-            max-height: 70vh;
-            touch-action: none; /* Tahtada dokunmayı browser'a bırakma */
-        }
-
-        /* Kaspar Bubble */
-        .kaspar-bubble {
-            background: var(--panel-bg);
-            padding: 12px;
-            border-radius: 12px;
-            border-left: 4px solid var(--accent-color);
-            width: 100%;
-            min-height: 50px;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
-
-        /* Controls */
-        .controls {
-            padding: 15px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            background: var(--panel-bg);
-            border-top: 2px solid var(--board-border);
-        }
-
-        .btn {
-            background: var(--accent-color);
-            color: #0f172a;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            flex: 1;
-            max-width: 150px;
-        }
-        .btn:active { transform: scale(0.96); }
-        .btn-secondary { background: #475569; color: white; }
-
-        /* Login Modal */
-        .modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 100;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .role-card {
-            background: var(--panel-bg);
-            padding: 20px;
-            margin: 10px;
-            border-radius: 15px;
-            width: 250px;
-            text-align: center;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-        .role-card:hover { border-color: var(--accent-color); }
-        
+        .app-container { display: flex; flex-direction: column; height: 100vh; max-width: 600px; margin: 0 auto; }
         .hidden { display: none !important; }
-        .thinking { animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
 
+        /* MODALS */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        
+        .role-btn {
+            background: var(--panel-bg); padding: 20px; margin: 10px; border-radius: 15px;
+            width: 250px; text-align: center; cursor: pointer; border: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .role-btn:active { transform: scale(0.95); border-color: var(--accent-color); }
+        
+        .input-group { margin: 10px 0; width: 80%; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: white; font-size: 1rem; text-align: center; }
+
+        /* GAME UI */
+        header {
+            padding: 15px; background: var(--panel-bg); border-bottom: 1px solid #334155;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .user-badge { background: #334155; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; }
+
+        .game-area { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 10px; gap: 15px; }
+        
+        .kaspar-bubble {
+            background: var(--panel-bg); padding: 15px; border-radius: 12px;
+            border-left: 4px solid var(--accent-color);
+            display: flex; align-items: center; gap: 10px; font-size: 0.95rem;
+            min-height: 60px;
+        }
+        
+        .board-wrapper { width: 100%; aspect-ratio: 1; touch-action: none; }
+        #board { width: 100%; height: 100%; border-radius: 8px; border: 3px solid #334155; }
+
+        .controls { padding: 15px; display: flex; gap: 10px; background: var(--panel-bg); }
+        .btn { background: var(--accent-color); color: #0f172a; border: none; padding: 12px; border-radius: 8px; font-weight: bold; flex: 1; cursor: pointer; }
+        .btn-green { background: var(--accent-green); color: white; }
+
+        /* PARENT UI */
+        .student-list { width: 100%; padding: 20px; overflow-y: auto; }
+        .student-item { background: var(--panel-bg); padding: 15px; margin-bottom: 10px; border-radius: 10px; display: flex; justify-content: space-between; cursor: pointer; }
+        .student-item:hover { background: #334155; }
     </style>
 </head>
 <body>
 
-    <!-- Login Screen -->
-    <div id="login-screen" class="modal">
-        <h1 style="color: var(--accent-color); margin-bottom: 30px;">🦁 Kaspar Akademi</h1>
-        <div class="role-card" onclick="app.login('student')">
+    <!-- 1. GİRİŞ EKRANI -->
+    <div id="screen-home" class="modal">
+        <h1 style="color: var(--accent-color);">🦁 Kaspar</h1>
+        <div class="role-btn" onclick="app.showAuth('student')">
             <div style="font-size: 3rem;">🎓</div>
-            <h3>Öğrenci</h3>
+            <h3>Öğrenci Girişi</h3>
         </div>
-        <div class="role-card" onclick="app.login('parent')">
-            <div style="font-size: 3rem;">🏠</div>
-            <h3>Ebeveyn</h3>
-        </div>
-        <div class="role-card" onclick="app.login('engineer')">
-            <div style="font-size: 3rem;">🛠️</div>
-            <h3>Mühendis</h3>
+        <div class="role-btn" onclick="app.showAuth('parent')">
+            <div style="font-size: 2rem;">🏠</div>
+            <h3>Ebeveyn Girişi</h3>
         </div>
     </div>
 
-    <!-- App Interface -->
-    <div id="app" class="app-container hidden">
+    <!-- 2. AUTH EKRANI -->
+    <div id="screen-auth" class="modal hidden">
+        <h2 id="auth-title">Giriş Yap</h2>
+        <div class="input-group"><input type="text" id="username" placeholder="Kullanıcı Adı"></div>
+        <div class="input-group"><input type="password" id="password" placeholder="Şifre"></div>
+        
+        <div style="display:flex; gap:10px; width:80%;">
+            <button class="btn" onclick="app.login()">Giriş</button>
+            <button class="btn btn-green" id="btn-register" onclick="app.register()">Kayıt Ol</button>
+        </div>
+        <br>
+        <button onclick="location.reload()" style="background:none; border:none; color:#94a3b8;">← Geri</button>
+    </div>
+
+    <!-- 3. OYUN EKRANI -->
+    <div id="screen-game" class="app-container hidden">
         <header>
-            <div class="brand">
-                <span>🦁 Kaspar</span>
-                <span id="conn-dot" class="connection-dot"></span>
-            </div>
-            <div id="user-info" style="font-size: 0.8rem; opacity: 0.8;">Misafir</div>
+            <span style="font-weight:bold; color:var(--accent-color);">🦁 Arena</span>
+            <div class="user-badge" id="game-username">Misafir</div>
         </header>
 
-        <!-- PARENT PANEL -->
-        <div id="parent-panel" class="hidden" style="flex:1; padding:20px; overflow-y:auto;">
-            <h2 style="color:var(--accent-color);">Gelişim Raporu 📊</h2>
-            <div style="background:var(--panel-bg); padding:15px; border-radius:10px; margin-bottom:15px;">
-                <h4>Son Durum</h4>
-                <p>Seviye: <span id="p-level">--</span></p>
-                <p>Puan (XP): <span id="p-xp">--</span></p>
-                <p>Toplam Oyun: <span id="p-games">--</span></p>
-                <p>Galibiyet: <span id="p-wins">--</span></p>
+        <div class="game-area">
+            <div class="kaspar-bubble">
+                <span style="font-size: 2rem;">🦁</span>
+                <div id="kaspar-text">Merhaba! Hazırsan başlayalım.</div>
             </div>
             
-            <div class="kaspar-bubble" style="margin-bottom: 20px;">
-                <span style="font-size: 1.5rem;">🦁</span>
-                <div>
-                    <strong>Kaspar'ın Notu:</strong>
-                    <div id="p-comment" style="font-style: italic; margin-top: 5px;">Yükleniyor...</div>
-                </div>
+            <div class="board-wrapper">
+                <div id="board"></div>
             </div>
-
-            <button class="btn btn-secondary" onclick="location.reload()">Çıkış</button>
+            
+            <div style="text-align:center; color:#94a3b8; font-size:0.9rem;" id="game-status">Sıra Beyazda</div>
         </div>
 
-        <!-- GAME AREA (Student/Engineer) -->
-        <div id="game-interface" class="game-area">
-            <!-- AI Mesajı -->
-            <div class="kaspar-bubble">
-                <span style="font-size: 1.5rem;">💭</span>
-                <div id="ai-text">Merhaba! Hadi satranç oynayalım. Beyaz sensin.</div>
-            </div>
+        <div class="controls">
+            <button class="btn" onclick="app.resetGame()">🔄 Yeni Oyun</button>
+            <button class="btn btn-green" onclick="app.askHint()">💡 İpucu</button>
+            <button class="btn" style="background:#ef4444; color:white;" onclick="location.reload()">Çıkış</button>
+        </div>
+    </div>
 
-            <!-- Tahta -->
-            <div class="board-container">
-                <div id="board" style="width: 100%; height: 100%;"></div>
-            </div>
-
-            <!-- Durum -->
-            <div id="status" style="font-size: 0.9rem; color: #94a3b8;">Sıra Beyazda</div>
+    <!-- 4. EBEVEYN EKRANI -->
+    <div id="screen-parent" class="app-container hidden">
+        <header>
+            <span>📊 Veli Paneli</span>
+            <button onclick="location.reload()" style="background:none; border:none; color:white;">Çıkış</button>
+        </header>
+        
+        <div id="student-list" class="student-list">
+            <!-- Öğrenci listesi buraya gelecek -->
+            <div style="text-align:center; margin-top:20px;">Öğrenciler Yükleniyor...</div>
         </div>
 
-        <div id="controls-bar" class="controls">
-            <button class="btn btn-secondary" onclick="app.resetGame()">🔄 Yeni</button>
-            <button class="btn" onclick="app.askHint()">💡 İpucu</button>
+        <!-- Detay Modal -->
+        <div id="report-modal" class="modal hidden">
+            <div style="background:var(--panel-bg); padding:20px; border-radius:15px; width:90%; max-width:400px;">
+                <h3 id="report-title" style="color:var(--accent-color);">Rapor</h3>
+                <div id="report-content" style="margin:15px 0; line-height:1.5;"></div>
+                <button class="btn" onclick="document.getElementById('report-modal').classList.add('hidden')">Kapat</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURATION ---
         const CONFIG = {
             apiKey: "kaspar_sec_eb82b49055236a3a862f42e53e8e8b97",
-            apiUrl: "https://kadir-pc.taildc8da7.ts.net/api", // Tailscale Funnel
-            passwords: {
-                student: "1234",
-                engineer: "jarvis",
-                parent: "ebeveyn"
-            }
+            apiUrl: "https://kadir-pc.taildc8da7.ts.net/api"
         };
 
-        // --- APP LOGIC ---
-        class KasparApp {
+        class App {
             constructor() {
+                this.role = null;
+                this.currentUser = null;
                 this.game = new Chess();
                 this.board = null;
-                this.role = null;
-                this.isLocked = false; // AI düşünürken tahtayı kilitle
-                this.isConnected = false;
+                this.isThinking = false;
+            }
+
+            showAuth(role) {
+                this.role = role;
+                document.getElementById('screen-home').classList.add('hidden');
+                document.getElementById('screen-auth').classList.remove('hidden');
+                document.getElementById('auth-title').innerText = role === 'student' ? 'Öğrenci Girişi' : 'Veli Girişi';
                 
-                this.checkConnection();
-                setInterval(() => this.checkConnection(), 30000);
+                // Veli için kayıt butonunu gizle (Manuel eklenir)
+                if (role === 'parent') document.getElementById('btn-register').classList.add('hidden');
+                else document.getElementById('btn-register').classList.remove('hidden');
             }
 
-            // Bağlantı Kontrolü
-            async checkConnection() {
+            async login() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                if(!username || !password) return alert("Lütfen bilgileri girin.");
+
                 try {
-                    const res = await fetch(`${CONFIG.apiUrl}/status`, { timeout: 3000 });
-                    this.isConnected = res.ok;
-                    document.getElementById('conn-dot').className = `connection-dot ${this.isConnected ? 'online' : ''}`;
-                } catch (e) {
-                    this.isConnected = false;
-                    document.getElementById('conn-dot').className = 'connection-dot';
-                    console.log("Bağlantı hatası:", e);
-                }
-            }
-
-            // Giriş
-            login(role) {
-                const pin = prompt(`${role === 'student' ? 'Öğrenci' : (role === 'parent' ? 'Ebeveyn' : 'Mühendis')} Şifresi:`);
-                if (pin === CONFIG.passwords[role]) {
-                    this.role = role;
-                    document.getElementById('login-screen').classList.add('hidden');
-                    document.getElementById('app').classList.remove('hidden');
-                    document.getElementById('user-info').innerText = role.toUpperCase();
-                    
-                    if (role === 'parent') {
-                        document.getElementById('game-interface').classList.add('hidden');
-                        document.getElementById('controls-bar').classList.add('hidden');
-                        document.getElementById('parent-panel').classList.remove('hidden');
-                        this.loadParentStats();
+                    const res = await this.apiCall('/auth/login', { username, password });
+                    if (res.status === 'success') {
+                        this.currentUser = res;
+                        this.startSession();
                     } else {
-                        // Oyun modunu başlat
-                        setTimeout(() => this.initBoard(), 100);
+                        alert(res.message);
                     }
-                } else {
-                    alert("Hatalı şifre!");
-                }
+                } catch(e) { alert("Bağlantı hatası!"); }
             }
 
-            async loadParentStats() {
+            async register() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                if(!username || !password) return alert("Kullanıcı adı ve şifre belirleyin.");
+
                 try {
-                    const res = await fetch(`${CONFIG.apiUrl}/stats`, { 
-                        headers: { 'X-Kaspar-Key': CONFIG.apiKey } 
+                    const res = await this.apiCall('/auth/register', { 
+                        username, password, role: 'student' 
                     });
-                    const data = await res.json();
-                    
-                    document.getElementById('p-level').innerText = data.level;
-                    document.getElementById('p-xp').innerText = data.xp;
-                    document.getElementById('p-games').innerText = data.total_games;
-                    document.getElementById('p-wins').innerText = data.wins;
-                    document.getElementById('p-comment').innerText = data.kaspar_comment || "Henüz veri yok.";
-                } catch(e) {
-                    console.error(e);
-                    document.getElementById('p-level').innerText = "Hata";
+                    if (res.status === 'success') {
+                        alert("Kayıt başarılı! Şimdi giriş yapabilirsin.");
+                    } else {
+                        alert(res.message);
+                    }
+                } catch(e) { alert("Kayıt hatası!"); }
+            }
+
+            startSession() {
+                document.getElementById('screen-auth').classList.add('hidden');
+                if (this.role === 'student') {
+                    document.getElementById('screen-game').classList.remove('hidden');
+                    document.getElementById('game-username').innerText = this.currentUser.username;
+                    setTimeout(() => this.initBoard(), 200);
+                } else {
+                    document.getElementById('screen-parent').classList.remove('hidden');
+                    this.loadStudents();
                 }
             }
 
-            // Tahta Kurulumu
+            // --- OYUN MANTIĞI ---
             initBoard() {
-                const boardEl = document.getElementById('board');
+                if(this.board) this.board.destroy();
                 
-                // CSS ile boyutlandırmayı garantiye alalım
-                // Chessboardjs bazen display:none içindeyken boyut hesaplayamaz
-                // Bu yüzden görünür olduğundan emin olmalıyız.
-                
-                if (this.board) {
-                    this.board.destroy(); // Varsa eskisi sil
-                }
-
                 this.board = Chessboard('board', {
                     draggable: true,
                     position: 'start',
                     pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
-                    onDragStart: (source, piece) => this.onDragStart(source, piece),
-                    onDrop: (source, target) => this.onDrop(source, target),
-                    onSnapEnd: () => this.board.position(this.game.fen())
+                    onDragStart: (s, p) => !this.isThinking && !this.game.game_over() && (this.game.turn() === 'w' || p.search(/^b/) === -1),
+                    onDrop: (s, t) => {
+                        const move = this.game.move({ from: s, to: t, promotion: 'q' });
+                        if (!move) return 'snapback';
+                        this.updateStatus();
+                        if (!this.game.game_over()) this.makeAiMove();
+                        else this.endGame();
+                    }
                 });
-
-                // Resize handler (Responsive)
-                setTimeout(() => this.board.resize(), 200); // İlk render için gecikmeli resize
+                
+                // Mobil hack
+                document.getElementById('board').addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
                 window.addEventListener('resize', () => this.board.resize());
-                
-                // Mobil kaydırmayı engelle (Touch hack)
-                if(boardEl) {
-                   boardEl.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
-                }
-            }
-
-            onDragStart(source, piece) {
-                // Oyun bitti mi veya AI düşünüyor mu?
-                if (this.game.game_over() || this.isLocked) return false;
-                
-                // Sadece kendi rengini oynat (Öğrenci = Beyaz)
-                if (this.game.turn() === 'b' && this.role === 'student') return false;
-            }
-
-            onDrop(source, target) {
-                const move = this.game.move({
-                    from: source,
-                    to: target,
-                    promotion: 'q' // Otomatik vezir
-                });
-
-                if (move === null) return 'snapback';
-
-                this.updateStatus();
-                
-                // Hamle başarılı, sıra AI'da
-                if (!this.game.game_over()) {
-                    this.makeAiMove();
-                } else {
-                    this.handleGameOver();
-                }
             }
 
             async makeAiMove() {
-                this.isLocked = true;
-                this.setAiThinking(true);
-
+                this.isThinking = true;
+                document.getElementById('kaspar-text').innerText = "Düşünüyorum...";
+                
                 try {
-                    const response = await fetch(`${CONFIG.apiUrl}/move`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Kaspar-Key': CONFIG.apiKey
-                        },
-                        body: JSON.stringify({ 
-                            fen: this.game.fen(), 
-                            role: this.role 
-                        })
+                    const res = await this.apiCall('/move', { 
+                        fen: this.game.fen(),
+                        user_id: this.currentUser.user_id 
                     });
-
-                    const data = await response.json();
                     
-                    if (data.status === 'success') {
-                        // AI Hamlesi
-                        this.game.move(data.best_move, { sloppy: true });
+                    if (res.status === 'success') {
+                        this.game.move(res.best_move, { sloppy: true });
                         this.board.position(this.game.fen());
-                        
-                        // Yorumu göster
-                        document.getElementById('ai-text').innerHTML = data.comment;
-                    } else {
-                        throw new Error(data.message);
+                        document.getElementById('kaspar-text').innerText = res.comment;
                     }
-
-                } catch (e) {
-                    console.error("AI Hatası:", e);
-                    document.getElementById('ai-text').innerText = "Hmm, bağlantımda bir sorun var. Tekrar dener misin?";
+                } catch(e) {
+                    console.error(e);
                 } finally {
-                    this.isLocked = false;
-                    this.setAiThinking(false);
+                    this.isThinking = false;
                     this.updateStatus();
-                    
-                    if (this.game.game_over()) this.handleGameOver();
+                    if(this.game.game_over()) this.endGame();
                 }
             }
-
-            async askHint() {
-                if (this.isLocked) return;
+            
+            async endGame() {
+                let result = 'draw';
+                if(this.game.in_checkmate()) result = this.game.turn() === 'w' ? 'loss' : 'win';
                 
-                document.getElementById('ai-text').innerText = "Sana bir ipucu bakıyorum...";
+                await this.apiCall('/game/end', {
+                    user_id: this.currentUser.user_id,
+                    result: result,
+                    moves: this.game.history().length
+                });
                 
-                try {
-                    const res = await fetch(`${CONFIG.apiUrl}/hint`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'X-Kaspar-Key': CONFIG.apiKey },
-                        body: JSON.stringify({ fen: this.game.fen() })
-                    });
-                    const data = await res.json();
-                    document.getElementById('ai-text').innerText = "💡 " + data.hint;
-                } catch (e) {
-                    document.getElementById('ai-text').innerText = "İpucu alamadım.";
-                }
+                document.getElementById('kaspar-text').innerHTML = `<b>OYUN BİTTİ!</b> (${result === 'win' ? 'Kazandın!' : 'Kaybettin'})`;
             }
 
             updateStatus() {
-                let status = '';
-                const moveColor = this.game.turn() === 'w' ? 'Beyaz' : 'Siyah';
-
-                if (this.game.in_check()) status = `${moveColor} ŞAH!`;
-                else status = `Sıra ${moveColor}da`;
-
-                document.getElementById('status').innerText = status;
-            }
-
-            handleGameOver() {
-                let result = 'draw';
-                if (this.game.in_checkmate()) {
-                    result = this.game.turn() === 'w' ? 'loss' : 'win'; // Kim mat oldu?
-                }
-                
-                const msg = result === 'win' ? "Tebrikler! Kazandın! 🏆" : (result === 'loss' ? "Mat oldun! Bir dahakine..." : "Berabere!");
-                document.getElementById('ai-text').innerHTML = `<b>${msg}</b>`;
-                
-                // Sonucu kaydet
-                fetch(`${CONFIG.apiUrl}/game/end`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-Kaspar-Key': CONFIG.apiKey },
-                    body: JSON.stringify({ result: result, moves: this.game.history().length })
-                });
+                let status = this.game.turn() === 'w' ? "Sıra Beyazda" : "Sıra Siyahda";
+                if(this.game.in_check()) status += " (ŞAH!)";
+                document.getElementById('game-status').innerText = status;
             }
 
             resetGame() {
                 this.game.reset();
                 this.board.start();
-                this.isLocked = false;
                 this.updateStatus();
-                document.getElementById('ai-text').innerText = "Yeni oyun! Başarılar.";
+                document.getElementById('kaspar-text').innerText = "Yeni oyun başladı! Başarılar " + this.currentUser.username;
+            }
+            
+            async askHint() {
+                const res = await this.apiCall('/hint', { fen: this.game.fen() });
+                if(res.status === 'success') alert("İpucu: " + res.hint);
             }
 
-            setAiThinking(thinking) {
-                const bubble = document.querySelector('.kaspar-bubble');
-                if (thinking) {
-                    bubble.classList.add('thinking');
-                    document.getElementById('ai-text').innerText = "Kaspar düşünüyor...";
-                } else {
-                    bubble.classList.remove('thinking');
+            // --- PARENT MANTIĞI ---
+            async loadStudents() {
+                const res = await this.apiCall('/parent/students');
+                const list = document.getElementById('student-list');
+                list.innerHTML = '';
+                
+                if(res.students) {
+                    res.students.forEach(s => {
+                        const div = document.createElement('div');
+                        div.className = 'student-item';
+                        div.innerHTML = `<span>🎓 ${s.username}</span><span>Level ${s.current_level}</span>`;
+                        div.onclick = () => this.showReport(s.id);
+                        list.appendChild(div);
+                    });
                 }
+            }
+
+            async showReport(studentId) {
+                const modal = document.getElementById('report-modal');
+                const content = document.getElementById('report-content');
+                modal.classList.remove('hidden');
+                content.innerHTML = 'Rapor hazırlanıyor...';
+                
+                const res = await this.apiCall('/parent/report', { student_id: studentId });
+                content.innerHTML = `
+                    <p><b>Toplam Oyun:</b> ${res.total_games}</p>
+                    <p><b>Galibiyet:</b> ${res.wins}</p>
+                    <hr style="border:1px solid #444; margin:10px 0;">
+                    <p><i>"${res.kaspar_comment}"</i></p>
+                `;
+            }
+
+            // --- API HELPER ---
+            async apiCall(endpoint, body={}) {
+                const res = await fetch(`${CONFIG.apiUrl}${endpoint}`, {
+                    method: 'POST', // GET isteyenleri ayırmadım, hepsi POST basitleştirdim (Backend'de hepsi POST değilse patlar, kontrol edelim)
+                    headers: { 'Content-Type': 'application/json', 'X-Kaspar-Key': CONFIG.apiKey },
+                    body: endpoint.includes('students') ? null : JSON.stringify(body) // GET için body yok
+                });
+                
+                // Fetch metodunu GET için düzeltelim
+                if (endpoint === '/parent/students') {
+                     const r = await fetch(`${CONFIG.apiUrl}${endpoint}`, { headers: { 'X-Kaspar-Key': CONFIG.apiKey } });
+                     return await r.json();
+                }
+
+                return await res.json();
             }
         }
 
-        // Başlat
-        window.app = new KasparApp();
-
+        window.app = new App();
     </script>
 </body>
 </html>
