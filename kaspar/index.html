@@ -168,7 +168,13 @@
 
     <!-- App Interface -->
     <div id="app" class="app-container hidden">
-        <!-- ... (Header vs) ... -->
+        <header>
+            <div class="brand">
+                <span>🦁 Kaspar</span>
+                <span id="conn-dot" class="connection-dot"></span>
+            </div>
+            <div id="user-info" style="font-size: 0.8rem; opacity: 0.8;">Misafir</div>
+        </header>
 
         <!-- PARENT PANEL -->
         <div id="parent-panel" class="hidden" style="flex:1; padding:20px; overflow-y:auto;">
@@ -180,6 +186,15 @@
                 <p>Toplam Oyun: <span id="p-games">--</span></p>
                 <p>Galibiyet: <span id="p-wins">--</span></p>
             </div>
+            
+            <div class="kaspar-bubble" style="margin-bottom: 20px;">
+                <span style="font-size: 1.5rem;">🦁</span>
+                <div>
+                    <strong>Kaspar'ın Notu:</strong>
+                    <div id="p-comment" style="font-style: italic; margin-top: 5px;">Yükleniyor...</div>
+                </div>
+            </div>
+
             <button class="btn btn-secondary" onclick="location.reload()">Çıkış</button>
         </div>
 
@@ -278,6 +293,7 @@
                     document.getElementById('p-xp').innerText = data.xp;
                     document.getElementById('p-games').innerText = data.total_games;
                     document.getElementById('p-wins').innerText = data.wins;
+                    document.getElementById('p-comment').innerText = data.kaspar_comment || "Henüz veri yok.";
                 } catch(e) {
                     console.error(e);
                     document.getElementById('p-level').innerText = "Hata";
@@ -288,6 +304,14 @@
             initBoard() {
                 const boardEl = document.getElementById('board');
                 
+                // CSS ile boyutlandırmayı garantiye alalım
+                // Chessboardjs bazen display:none içindeyken boyut hesaplayamaz
+                // Bu yüzden görünür olduğundan emin olmalıyız.
+                
+                if (this.board) {
+                    this.board.destroy(); // Varsa eskisi sil
+                }
+
                 this.board = Chessboard('board', {
                     draggable: true,
                     position: 'start',
@@ -298,10 +322,13 @@
                 });
 
                 // Resize handler (Responsive)
+                setTimeout(() => this.board.resize(), 200); // İlk render için gecikmeli resize
                 window.addEventListener('resize', () => this.board.resize());
                 
                 // Mobil kaydırmayı engelle (Touch hack)
-                boardEl.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+                if(boardEl) {
+                   boardEl.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+                }
             }
 
             onDragStart(source, piece) {
