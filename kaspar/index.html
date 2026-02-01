@@ -304,16 +304,28 @@
         var progressChart = null;
         var isConnected = false;
 
+        // GÜVENLİK ANAHTARI (Faz 2)
+        const API_KEY = "kaspar_sec_eb82b49055236a3a862f42e53e8e8b97";
+
         // API URL - Tailscale Funnel (Port 443 -> 5000)
         const API_URL = 'https://kadir-pc.taildc8da7.ts.net/api';
         
         // Fallback: Aynı sunucuda çalışıyorsa
         const API_URL_LOCAL = '/brain/api';
 
+        // Helper: Auth Header Ekle
+        function getHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                'X-Kaspar-Key': API_KEY
+            };
+        }
+
         // Bağlantı kontrolü
         async function checkConnection() {
             const statusEl = document.getElementById('connection-status');
             try {
+                // Status endpoint auth istemez ama yine de ekleyelim
                 const response = await fetch(`${API_URL}/status`, { timeout: 5000 });
                 if (response.ok) {
                     isConnected = true;
@@ -491,7 +503,7 @@
             try {
                 const response = await fetch(`${getAPIUrl()}/move`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: getHeaders(),
                     body: JSON.stringify({ fen: game.fen(), role: currentRole })
                 });
                 const data = await response.json();
@@ -520,7 +532,7 @@
             try {
                 const response = await fetch(`${getAPIUrl()}/hint`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: getHeaders(),
                     body: JSON.stringify({ fen: game.fen() })
                 });
                 const data = await response.json();
@@ -625,7 +637,7 @@
         
         async function updateSystemResources() {
             try {
-                const response = await fetch(`${getAPIUrl()}/system`);
+                const response = await fetch(`${getAPIUrl()}/system`, { headers: getHeaders() });
                 const data = await response.json();
                 
                 if (data.status === 'success') {
@@ -650,7 +662,7 @@
             const terminal = document.getElementById('terminal-output');
             
             try {
-                const response = await fetch(`${getAPIUrl()}/powerpool`);
+                const response = await fetch(`${getAPIUrl()}/powerpool`, { headers: getHeaders() });
                 const data = await response.json();
                 
                 if (data.status === 'success') {
@@ -689,7 +701,7 @@
             for (const ep of endpoints) {
                 try {
                     const start = Date.now();
-                    const response = await fetch(`${getAPIUrl()}/${ep}`);
+                    const response = await fetch(`${getAPIUrl()}/${ep}`, { headers: getHeaders() });
                     const elapsed = Date.now() - start;
                     const data = await response.json();
                     results += `<div class="terminal-line" style="color:#0f0;">✓ /${ep} - ${elapsed}ms - ${JSON.stringify(data).substring(0, 50)}...</div>`;
