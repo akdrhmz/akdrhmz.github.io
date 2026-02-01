@@ -155,26 +155,36 @@
         <div class="role-card" onclick="app.login('student')">
             <div style="font-size: 3rem;">🎓</div>
             <h3>Öğrenci</h3>
-            <small>Şifre: 1234</small>
+        </div>
+        <div class="role-card" onclick="app.login('parent')">
+            <div style="font-size: 3rem;">🏠</div>
+            <h3>Ebeveyn</h3>
         </div>
         <div class="role-card" onclick="app.login('engineer')">
             <div style="font-size: 3rem;">🛠️</div>
             <h3>Mühendis</h3>
-            <small>Şifre: jarvis</small>
         </div>
     </div>
 
     <!-- App Interface -->
     <div id="app" class="app-container hidden">
-        <header>
-            <div class="brand">
-                <span>🦁 Kaspar</span>
-                <span id="conn-dot" class="connection-dot"></span>
-            </div>
-            <div id="user-info" style="font-size: 0.8rem; opacity: 0.8;">Misafir</div>
-        </header>
+        <!-- ... (Header vs) ... -->
 
-        <div class="game-area">
+        <!-- PARENT PANEL -->
+        <div id="parent-panel" class="hidden" style="flex:1; padding:20px; overflow-y:auto;">
+            <h2 style="color:var(--accent-color);">Gelişim Raporu 📊</h2>
+            <div style="background:var(--panel-bg); padding:15px; border-radius:10px; margin-bottom:15px;">
+                <h4>Son Durum</h4>
+                <p>Seviye: <span id="p-level">--</span></p>
+                <p>Puan (XP): <span id="p-xp">--</span></p>
+                <p>Toplam Oyun: <span id="p-games">--</span></p>
+                <p>Galibiyet: <span id="p-wins">--</span></p>
+            </div>
+            <button class="btn btn-secondary" onclick="location.reload()">Çıkış</button>
+        </div>
+
+        <!-- GAME AREA (Student/Engineer) -->
+        <div id="game-interface" class="game-area">
             <!-- AI Mesajı -->
             <div class="kaspar-bubble">
                 <span style="font-size: 1.5rem;">💭</span>
@@ -190,7 +200,7 @@
             <div id="status" style="font-size: 0.9rem; color: #94a3b8;">Sıra Beyazda</div>
         </div>
 
-        <div class="controls">
+        <div id="controls-bar" class="controls">
             <button class="btn btn-secondary" onclick="app.resetGame()">🔄 Yeni</button>
             <button class="btn" onclick="app.askHint()">💡 İpucu</button>
         </div>
@@ -236,17 +246,41 @@
 
             // Giriş
             login(role) {
-                const pin = prompt(`${role === 'student' ? 'Öğrenci' : 'Mühendis'} Şifresi:`);
+                const pin = prompt(`${role === 'student' ? 'Öğrenci' : (role === 'parent' ? 'Ebeveyn' : 'Mühendis')} Şifresi:`);
                 if (pin === CONFIG.passwords[role]) {
                     this.role = role;
                     document.getElementById('login-screen').classList.add('hidden');
                     document.getElementById('app').classList.remove('hidden');
                     document.getElementById('user-info').innerText = role.toUpperCase();
                     
-                    // Tahtayı başlat (DOM render olduktan sonra)
-                    setTimeout(() => this.initBoard(), 100);
+                    if (role === 'parent') {
+                        document.getElementById('game-interface').classList.add('hidden');
+                        document.getElementById('controls-bar').classList.add('hidden');
+                        document.getElementById('parent-panel').classList.remove('hidden');
+                        this.loadParentStats();
+                    } else {
+                        // Oyun modunu başlat
+                        setTimeout(() => this.initBoard(), 100);
+                    }
                 } else {
                     alert("Hatalı şifre!");
+                }
+            }
+
+            async loadParentStats() {
+                try {
+                    const res = await fetch(`${CONFIG.apiUrl}/stats`, { 
+                        headers: { 'X-Kaspar-Key': CONFIG.apiKey } 
+                    });
+                    const data = await res.json();
+                    
+                    document.getElementById('p-level').innerText = data.level;
+                    document.getElementById('p-xp').innerText = data.xp;
+                    document.getElementById('p-games').innerText = data.total_games;
+                    document.getElementById('p-wins').innerText = data.wins;
+                } catch(e) {
+                    console.error(e);
+                    document.getElementById('p-level').innerText = "Hata";
                 }
             }
 
