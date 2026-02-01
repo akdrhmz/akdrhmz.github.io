@@ -3,336 +3,541 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kaspar Satranç Akademisi</title>
+    <title>Kaspar Satranç Akademisi 2.0</title>
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --container-bg: #1e293b;
+            --text-color: #f8fafc;
+            --primary-blue: #38bdf8;
+            --accent-gold: #fbbf24;
+            --accent-green: #22c55e;
+            --accent-blue: #3b82f6;
+            --accent-purple: #a855f7;
+            --stat-bg: #334155;
+            --role-accent: var(--primary-blue);
+        }
+
+        body.role-student { --role-accent: var(--accent-gold); }
+        body.role-parent { --role-accent: var(--accent-green); }
+        body.role-engineer { --role-accent: var(--accent-blue); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .pulse { animation: pulse 1.5s infinite; }
+        .bounce { animation: bounce 0.6s ease-in-out; }
+        
+        * { box-sizing: border-box; }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Öğrenci Seçim Ekranı */
+        .student-select-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .student-select-title {
+            font-size: 2.5rem;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .student-select-subtitle {
+            color: #94a3b8;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .student-cards {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .student-card {
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border: 3px solid transparent;
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-width: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .student-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-purple));
+        }
+
+        .student-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--accent-gold);
+            box-shadow: 0 20px 40px rgba(251, 191, 36, 0.2);
+        }
+
+        .student-card .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 15px;
+        }
+
+        .student-card h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: var(--text-color);
+        }
+
+        .student-card .level-badge {
+            margin-top: 10px;
+            padding: 5px 15px;
+            background: var(--stat-bg);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--accent-gold);
+        }
+
+        .back-link {
+            margin-top: 40px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary-blue);
+        }
+
+        /* Ana Layout */
+        .main-layout {
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
+            max-width: 1400px;
+            width: 100%;
+            padding: 15px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        .side-panel {
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+            background: var(--container-bg);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border-top: 5px solid var(--role-accent);
+        }
+
+        .container {
+            flex: 2;
+            background: var(--container-bg);
+            padding: 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            text-align: center;
+            position: relative;
+            border-top: 5px solid var(--role-accent);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hidden { display: none !important; }
+
+        .role-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin: 30px 0; width: 100%; max-width: 500px; }
+        .role-card { background: #334155; padding: 20px; border-radius: 15px; cursor: pointer; transition: 0.3s; border: 2px solid transparent; }
+        .role-card:hover { border-color: var(--primary-blue); transform: translateY(-5px); }
+        .role-card span { font-size: 2rem; }
+
+        .stat-box { background: var(--stat-bg); padding: 15px; border-radius: 12px; border-bottom: 3px solid var(--role-accent); }
+        .stat-value { font-size: 1.5rem; font-weight: bold; color: var(--role-accent); }
+        .stat-label { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; }
+
+        .kaspar-bubble { 
+            background: linear-gradient(145deg, #334155, #3d4f69);
+            padding: 15px; 
+            border-radius: 15px; 
+            border-left: 5px solid var(--role-accent); 
+            position: relative; 
+            min-height: 60px;
+        }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal { background: var(--container-bg); padding: 30px; border-radius: 20px; border: 3px solid var(--accent-gold); max-width: 400px; text-align: center; }
+
+        /* Satranç Tahtası */
+        .board-wrapper {
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1;
+            margin: 10px auto;
+        }
+        
+        #board {
+            width: 100% !important;
+            height: 100% !important;
+            border: 5px solid #334155;
+            border-radius: 8px;
+        }
+        
+        .btn { 
+            background: var(--role-accent); 
+            color: #0f172a; 
+            border: none; 
+            padding: 12px 20px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            font-size: 0.9rem; 
+        }
+        .btn:hover { opacity: 0.9; transform: scale(1.02); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-gold { background: var(--accent-gold); }
+        .btn-purple { background: var(--accent-purple); color: white; }
+        .btn-red { background: #ef4444; color: white; }
+        .btn-outline { background: transparent; border: 2px solid var(--role-accent); color: var(--role-accent); }
+        .btn-outline:hover { background: var(--role-accent); color: #0f172a; }
+        .btn-link { background: none; color: var(--role-accent); text-decoration: underline; font-size: 0.8rem; cursor: pointer; border: none; padding: 8px; }
+
+        .progress-bar-container { background: #334155; border-radius: 10px; height: 10px; margin: 10px 0; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--role-accent); width: 0%; transition: width 1s ease-in-out; }
+        
+        .list-item { background: #334155; margin-bottom: 8px; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--role-accent); }
+        
+        .terminal { background: #000; color: #0f0; font-family: 'Courier New', Courier, monospace; padding: 15px; border-radius: 10px; text-align: left; height: 250px; overflow-y: auto; font-size: 0.8rem; border: 1px solid #334155; width: 100%; }
+        .terminal-line { margin-bottom: 4px; word-break: break-all; }
+
+        .button-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 15px; }
+
+        .connection-status { 
+            position: fixed; 
+            bottom: 10px; 
+            right: 10px; 
+            padding: 8px 15px; 
+            border-radius: 20px; 
+            font-size: 0.75rem;
+            z-index: 100;
+        }
+        .status-online { background: #22c55e; color: white; }
+        .status-offline { background: #ef4444; color: white; }
+
+        /* Öğrenci Seçici (Ebeveyn Panel) */
+        .student-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .student-selector-btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 2px solid #475569;
+            background: transparent;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .student-selector-btn:hover,
+        .student-selector-btn.active {
+            border-color: var(--accent-green);
+            background: var(--accent-green);
+            color: #0f172a;
+        }
+
+        /* ELO Grafik Alanı */
+        .chart-container {
+            width: 100%;
+            max-width: 700px;
+            background: #1a2332;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 0 auto;
+        }
+
+        /* Move History */
+        .move-history {
+            max-height: 150px;
+            overflow-y: auto;
+            background: #1a2332;
+            border-radius: 10px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            text-align: left;
+        }
+
+        /* Mobil Responsive */
+        @media (max-width: 900px) { 
+            .main-layout { 
+                flex-direction: column; 
+                padding: 10px;
+                gap: 15px;
+            } 
+            .side-panel { 
+                width: 100%; 
+                max-width: 100%;
+                order: 2;
+                padding: 15px;
+            }
+            .container { 
+                width: 100%; 
+                order: 1; 
+                padding: 1rem;
+            }
+            .board-wrapper {
+                max-width: 100%;
+                width: calc(100vw - 60px);
+            }
+            .role-selector {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .role-card {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                padding: 15px;
+            }
+            .role-card span { font-size: 1.5rem; }
+            .button-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            .button-group .btn {
+                width: 100%;
+            }
+            .student-cards {
+                flex-direction: column;
+            }
+            .student-card {
+                min-width: 280px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .stat-value { font-size: 1.2rem; }
+            .terminal { height: 180px; font-size: 0.7rem; }
+            .student-select-title { font-size: 1.8rem; }
+        }
+    </style>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-    
-    <style>
-        :root { --bg: #0f172a; --panel: #1e293b; --accent: #38bdf8; --text: #f8fafc; --green: #22c55e; --red: #ef4444; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: sans-serif; overflow: hidden; touch-action: none; }
-        .hidden { display: none !important; }
-        .app { display: flex; flex-direction: column; height: 100vh; max-width: 600px; margin: 0 auto; }
-        
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .card { background: var(--panel); padding: 20px; margin: 10px; border-radius: 15px; width: 280px; text-align: center; border: 2px solid transparent; cursor: pointer; }
-        .card:hover { border-color: var(--accent); }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; background: #020617; color: white; text-align: center; font-size: 1rem; }
-        
-        .btn { background: var(--accent); color: #000; padding: 12px; border: none; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 5px; }
-        .btn-green { background: var(--green); color: white; }
-        .btn-red { background: var(--red); color: white; }
-        .btn-small { padding: 5px 10px; font-size: 0.8rem; width: auto; }
-        
-        header { padding: 15px; background: var(--panel); display: flex; justify-content: space-between; align-items: center; }
-        .game-area { flex: 1; display: flex; flex-direction: column; padding: 10px; gap: 15px; justify-content: center; }
-        .bubble { background: var(--panel); padding: 15px; border-radius: 12px; border-left: 4px solid var(--accent); min-height: 50px; display: flex; align-items: center; gap: 10px; }
-        #board { width: 100%; aspect-ratio: 1; border: 3px solid #334155; border-radius: 8px; }
-        .controls { padding: 15px; display: flex; gap: 10px; background: var(--panel); }
-        
-        .list-container { width: 100%; padding: 20px; overflow-y: auto; flex: 1; }
-        .list-item { background: var(--panel); padding: 15px; margin-bottom: 10px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .code-display { font-size: 2rem; letter-spacing: 5px; color: var(--accent); font-weight: bold; margin: 20px 0; }
-        
-        /* Admin Table */
-        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        th { text-align: left; color: var(--accent); border-bottom: 1px solid #444; padding: 5px; }
-        td { padding: 8px 5px; border-bottom: 1px solid #333; }
-        .status-badge { padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; }
-        .approved { background: rgba(34, 197, 94, 0.2); color: var(--green); }
-        .pending { background: rgba(239, 68, 68, 0.2); color: var(--red); }
-    </style>
 </head>
 <body>
 
-    <!-- 1. GİRİŞ -->
-    <div id="screen-home" class="modal">
-        <h1 style="color:var(--accent);">🦁 Kaspar</h1>
-        <div class="card" onclick="app.showAuth('student')"><h1>🎓</h1><h3>Öğrenci</h3></div>
-        <div class="card" onclick="app.showAuth('parent')"><h1>🏠</h1><h3>Ebeveyn</h3></div>
-        <div class="card" onclick="app.showAuth('engineer')"><h1>🛠️</h1><h3>Mühendis</h3></div>
-    </div>
+    <!-- Bağlantı Durumu -->
+    <div id="connection-status" class="connection-status status-offline">🔴 Bağlanıyor...</div>
 
-    <!-- 2. AUTH -->
-    <div id="screen-auth" class="modal hidden">
-        <h2 id="auth-title">Giriş</h2>
-        <div style="width:80%;">
-            <input type="text" id="username" placeholder="Kullanıcı Adı">
-            <input type="password" id="password" placeholder="Şifre">
-            <button class="btn" onclick="app.login()">Giriş Yap</button>
-            <button class="btn btn-green" id="btn-reg" onclick="app.register()">Yeni Kayıt</button>
-            <br>
-            <button class="btn" style="background:none; color:#888; font-size:0.8rem;" onclick="app.showResetPassword()">Şifremi Unuttum</button>
-            <br><br>
-            <button onclick="location.reload()" style="background:none; border:none; color:#666;">← Geri</button>
+    <!-- Altın Öğüt Modal -->
+    <div id="golden-tip-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <h2 style="color: var(--accent-gold);">🦁 Kaspar'ın Altın Öğüdü</h2>
+            <div id="golden-tip-content" style="margin: 20px 0; font-style: italic;"></div>
+            <button class="btn btn-gold" onclick="closeModal('golden-tip-modal')">Teşekkürler Kaspar!</button>
         </div>
     </div>
 
-    <!-- 3. OYUN -->
-    <div id="screen-game" class="app hidden">
-        <header>
-            <span style="font-weight:bold; color:var(--accent);">🦁 Arena</span>
-            <div>
-                <span id="game-username" style="font-size:0.9rem; margin-right:10px;">Misafir</span>
-                <button onclick="app.showPairingCode()" style="background:#334155; color:white; border:none; padding:5px 10px; border-radius:15px;">🔗 Bağla</button>
+    <!-- ========== 1. EKRAN: ÖĞRENCİ SEÇİMİ ========== -->
+    <div id="student-select-screen" class="student-select-screen hidden">
+        <h1 class="student-select-title">🦁 Hoş Geldin!</h1>
+        <p class="student-select-subtitle">Bugün kim oynayacak?</p>
+        
+        <div class="student-cards">
+            <div class="student-card" onclick="selectStudent('yegen')">
+                <div class="avatar">👦</div>
+                <h3>Yeğen</h3>
+                <div class="level-badge" id="yegen-level">Seviye --</div>
             </div>
-        </header>
-        <div class="game-area">
-            <div class="bubble"><span style="font-size:1.5rem;">🦁</span><div id="ai-text">Merhaba!</div></div>
-            <div style="width:100%; aspect-ratio:1;"><div id="board"></div></div>
-            <div id="status" style="text-align:center; color:#888;">Sıra Beyazda</div>
+            <div class="student-card" onclick="selectStudent('omer')">
+                <div class="avatar">🧒</div>
+                <h3>Ömer Faruk</h3>
+                <div class="level-badge" id="omer-level">Seviye --</div>
+            </div>
         </div>
-        <div class="controls">
-            <button class="btn" style="background:#475569; color:white;" onclick="app.resetGame()">Yeni</button>
-            <button class="btn btn-green" onclick="app.askHint()">İpucu</button>
-            <button class="btn btn-red" onclick="location.reload()">Çıkış</button>
-        </div>
+        
+        <div class="back-link" onclick="showLoginScreen()">← Farklı bir rol ile giriş yap</div>
     </div>
 
-    <!-- 4. EBEVEYN -->
-    <div id="screen-parent" class="app hidden">
-        <header>
-            <span>📊 Veli Paneli</span>
-            <button onclick="location.reload()" style="background:none; border:none; color:white;">Çıkış</button>
-        </header>
-        <div class="list-container" id="student-list"></div>
-        <div style="padding:20px;"><button class="btn btn-green" onclick="app.showAddStudent()">➕ Öğrenci Ekle</button></div>
-    </div>
-
-    <!-- 5. ADMIN -->
-    <div id="screen-admin" class="app hidden">
-        <header>
-            <span style="color:var(--red);">🛠️ Yönetim</span>
-            <button onclick="location.reload()" style="background:none; border:none; color:white;">Çıkış</button>
-        </header>
-        <div class="list-container">
-            <div id="admin-user-list"></div>
+    <!-- ========== 2. EKRAN: ROL SEÇİMİ & GİRİŞ ========== -->
+    <div id="login-screen" class="container" style="max-width: 600px; margin: 20px auto;">
+        <h1 style="color: var(--primary-blue);">🦁 Kaspar 2.0</h1>
+        <p>Satranç Akademisi</p>
+        <div class="role-selector">
+            <div class="role-card" onclick="openLogin('student')"><span>🎓</span><h3>Öğrenci</h3></div>
+            <div class="role-card" onclick="openLogin('parent')"><span>🏠</span><h3>Ebeveyn</h3></div>
+            <div class="role-card" onclick="openLogin('engineer')"><span>🛠️</span><h3>Mühendis</h3></div>
         </div>
-    </div>
-
-    <!-- MODALS -->
-    <div id="modal-code" class="modal hidden">
-        <div class="card" style="cursor:default;">
-            <h3>Veli Bağlama Kodu</h3>
-            <div class="code-display" id="pairing-code">...</div>
-            <button class="btn" onclick="document.getElementById('modal-code').classList.add('hidden')">Tamam</button>
+        <div id="auth-panel" class="hidden">
+            <h4 id="auth-title">Giriş Yap</h4>
+            <input type="text" id="auth-username" placeholder="Kullanıcı Adı" style="background:#0f172a; color:white; padding:12px; border-radius:8px; border:1px solid #475569; text-align:center; width: 200px; font-size: 1rem; margin-bottom: 10px;">
+            <br>
+            <input type="password" id="auth-password" placeholder="Şifre" style="background:#0f172a; color:white; padding:12px; border-radius:8px; border:1px solid #475569; text-align:center; width: 200px; font-size: 1rem;">
+            <br><br>
+            <button class="btn" id="login-btn" onclick="handleLogin()">Giriş</button>
+            <br>
+            <button class="btn-link" onclick="showRegister()">Kayıt Ol</button>
         </div>
-    </div>
-
-    <div id="modal-add-student" class="modal hidden">
-        <div class="card" style="cursor:default;">
-            <h3>Öğrenci Ekle</h3>
-            <input type="text" id="link-code" placeholder="KOD">
-            <button class="btn btn-green" onclick="app.linkStudent()">Ekle</button>
-            <button class="btn" onclick="document.getElementById('modal-add-student').classList.add('hidden')">İptal</button>
-        </div>
-    </div>
-    
-    <div id="modal-report" class="modal hidden">
-        <div class="card" style="width:90%; max-width:400px; cursor:default; text-align:left;">
-            <h3 id="rep-name" style="color:var(--accent);">Rapor</h3>
-            <div id="rep-content" style="line-height:1.6;"></div>
-            <hr style="border-color:#444; margin:15px 0;">
-            <button class="btn" onclick="app.showResetPassword(currentReportId)">Şifre Sıfırla</button>
-            <button class="btn btn-red" onclick="document.getElementById('modal-report').classList.add('hidden')">Kapat</button>
+        
+        <!-- Kayıt Formu -->
+        <div id="register-panel" class="hidden">
+            <h4>Yeni Kayıt</h4>
+            <input type="text" id="reg-username" placeholder="Kullanıcı Adı" style="background:#0f172a; color:white; padding:12px; border-radius:8px; border:1px solid #475569; text-align:center; width: 200px; font-size: 1rem; margin-bottom: 10px;">
+            <br>
+            <input type="password" id="reg-password" placeholder="Şifre (min 4 karakter)" style="background:#0f172a; color:white; padding:12px; border-radius:8px; border:1px solid #475569; text-align:center; width: 200px; font-size: 1rem;">
+            <br><br>
+            <button class="btn btn-gold" onclick="handleRegister()">Kayıt Ol</button>
+            <br>
+            <button class="btn-link" onclick="hideRegister()">← Giriş yap</button>
         </div>
     </div>
 
-    <div id="modal-reset-pw" class="modal hidden">
-        <div class="card" style="cursor:default;">
-            <h3>Şifre Sıfırla</h3>
-            <input type="text" id="reset-username" disabled style="opacity:0.5;">
-            <input type="password" id="new-password" placeholder="Yeni Şifre">
-            <button class="btn btn-green" onclick="app.doResetPassword()">Güncelle</button>
-            <button class="btn" onclick="document.getElementById('modal-reset-pw').classList.add('hidden')">İptal</button>
-        </div>
-    </div>
-
-    <script>
-        const API_URL = "https://kadir-pc.taildc8da7.ts.net/api";
-        const API_KEY = "kaspar_sec_eb82b49055236a3a862f42e53e8e8b97";
-        let currentReportId = null;
-
-        class App {
-            constructor() {
-                this.user = null; this.role = null; this.game = new Chess(); this.board = null;
-            }
-
-            showAuth(role) {
-                this.role = role;
-                document.getElementById('screen-home').classList.add('hidden');
-                document.getElementById('screen-auth').classList.remove('hidden');
-                document.getElementById('auth-title').innerText = role === 'engineer' ? 'Mühendis Girişi' : 'Giriş Yap';
-                if(role === 'engineer') document.getElementById('btn-reg').classList.add('hidden');
-                else document.getElementById('btn-reg').classList.remove('hidden');
-            }
-
-            async login() {
-                const u = document.getElementById('username').value;
-                const p = document.getElementById('password').value;
-                if(!u || !p) return alert("Bilgileri girin.");
-
-                // Backdoor for Engineer Setup
-                if(this.role === 'engineer' && u === 'jarvis' && p === 'master') {
-                    this.user = { user_id: 0, username: 'Jarvis', role: 'engineer' };
-                    this.initAdmin(); return;
-                }
-
-                const res = await this.post('/auth/login', { username: u, password: p });
-                if (res.status === 'success') {
-                    this.user = res;
-                    this.role = res.role;
-                    document.getElementById('screen-auth').classList.add('hidden');
-                    if (this.role === 'student') this.initGame();
-                    else if (this.role === 'parent') this.initParent();
-                    else if (this.role === 'engineer') this.initAdmin();
-                } else alert(res.message);
-            }
-
-            async register() {
-                const u = document.getElementById('username').value;
-                const p = document.getElementById('password').value;
-                const res = await this.post('/auth/register', { username: u, password: p, role: this.role });
+    <!-- ========== 3. EKRAN: ANA UYGULAMA ========== -->
+    <div id="main-layout" class="main-layout hidden">
+        <div class="side-panel">
+            <div style="text-align:center;"><span style="font-size:3rem;" id="side-icon">🦁</span><h3 id="side-title">Kaspar Mentor</h3></div>
+            <div class="kaspar-bubble"><div id="ai-thought">Merhaba Şampiyon! Hamle sırası sende.</div></div>
+            
+            <!-- Öğrenci İstatistikleri -->
+            <div id="student-stats" class="role-specific-ui">
+                <h4 style="margin-bottom:10px; color:var(--role-accent);">Başarıların 🏆</h4>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="stat-box"><div class="stat-value" id="stat-score">--</div><div class="stat-label">ELO</div></div>
+                    <div class="stat-box"><div class="stat-value" id="stat-wins">--</div><div class="stat-label">Galibiyet</div></div>
+                    <div class="stat-box"><div class="stat-value" id="stat-games">--</div><div class="stat-label">Toplam Oyun</div></div>
+                    <div class="stat-box"><div class="stat-value" id="stat-streak">--</div><div class="stat-label">Seviye</div></div>
+                </div>
                 
-                // Başarılı olsa bile pending uyarısı ver
-                if (res.status === 'success') {
-                   alert("Kayıt başarılı! Ancak güvenlik gereği YÖNETİCİ ONAYI gerekmektedir. Yöneticiye haber verildi.");
-                   location.reload();
-                } else {
-                   alert(res.message);
-                }
-            }
+                <!-- Hamle Geçmişi -->
+                <h4 style="margin: 15px 0 10px; color:var(--role-accent);">Son Hamleler 📜</h4>
+                <div class="move-history" id="move-history">Henüz hamle yapılmadı.</div>
+            </div>
 
-            // --- STUDENT ---
-            initGame() {
-                document.getElementById('screen-game').classList.remove('hidden');
-                document.getElementById('game-username').innerText = this.user.username;
-                setTimeout(() => this.initBoard(), 200);
-            }
-            async showPairingCode() {
-                const res = await this.post('/auth/code/generate', { user_id: this.user.user_id });
-                document.getElementById('pairing-code').innerText = res.code;
-                document.getElementById('modal-code').classList.remove('hidden');
-            }
-            initBoard() {
-                if(this.board) this.board.destroy();
-                this.board = Chessboard('board', {
-                    draggable: true, position: 'start',
-                    onDrop: (s, t) => {
-                        const m = this.game.move({ from: s, to: t, promotion: 'q' });
-                        if (!m) return 'snapback';
-                        this.updateStatus();
-                        if (!this.game.game_over()) this.makeAiMove(); else this.endGame();
-                    }
-                });
-                document.getElementById('board').addEventListener('touchmove', e => e.preventDefault(), {passive:false});
-                window.addEventListener('resize', () => this.board.resize());
-            }
-            async makeAiMove() {
-                document.getElementById('ai-text').innerText = "Düşünüyorum...";
-                const res = await this.post('/move', { fen: this.game.fen(), user_id: this.user.user_id });
-                if (res.status === 'success') {
-                    this.game.move(res.best_move, { sloppy: true });
-                    this.board.position(this.game.fen());
-                    document.getElementById('ai-text').innerText = res.comment;
-                    this.updateStatus();
-                    if(this.game.game_over()) this.endGame();
-                }
-            }
-            updateStatus() { document.getElementById('status').innerText = this.game.in_check() ? "ŞAH!" : (this.game.turn() === 'w' ? "Sıra Beyazda" : "Sıra Siyahda"); }
-            async endGame() { 
-                let r = 'draw'; if(this.game.in_checkmate()) r = this.game.turn() === 'w' ? 'loss' : 'win';
-                await this.post('/game/end', { user_id: this.user.user_id, result: r, moves: this.game.history().length });
-                document.getElementById('ai-text').innerHTML = `<b>OYUN BİTTİ!</b>`;
-            }
-            resetGame() { this.game.reset(); this.board.start(); this.updateStatus(); document.getElementById('ai-text').innerText = "Yeni Oyun!"; }
-            async askHint() { const r = await this.post('/hint', {fen:this.game.fen()}); if(r.status==='success') alert(r.hint); }
+            <!-- Ebeveyn İstatistikleri -->
+            <div id="parent-stats" class="role-specific-ui hidden">
+                <h4 style="margin-bottom:10px; color:var(--role-accent);">Hızlı Bakış 📈</h4>
+                <div class="stat-box" style="margin-bottom:10px;"><div class="stat-value" id="parent-weekly-progress">--</div><div class="stat-label">Haftalık Gelişim</div></div>
+                <div class="stat-box" style="margin-bottom:10px;"><div class="stat-value" id="parent-total-games">--</div><div class="stat-label">Toplam Oyun</div></div>
+                <div class="stat-box"><div class="stat-value" id="parent-win-rate">--</div><div class="stat-label">Kazanma Oranı</div></div>
+            </div>
 
-            // --- PARENT ---
-            async initParent() {
-                document.getElementById('screen-parent').classList.remove('hidden');
-                this.loadMyStudents();
-            }
-            async loadMyStudents() {
-                const res = await this.post('/parent/my_students', { parent_id: this.user.user_id });
-                const list = document.getElementById('student-list');
-                list.innerHTML = '';
-                if (res.students && res.students.length > 0) {
-                    res.students.forEach(s => {
-                        const d = document.createElement('div'); d.className = 'list-item';
-                        d.innerHTML = `<span>🎓 ${s.username}</span><span>Lvl ${s.current_level}</span>`;
-                        d.onclick = () => this.showReport(s.id, s.username);
-                        list.appendChild(d);
-                    });
-                } else list.innerHTML = '<div style="text-align:center; color:#888;">Henüz ekli öğrenci yok.</div>';
-            }
-            async showReport(id, name) {
-                currentReportId = id;
-                document.getElementById('modal-report').classList.remove('hidden');
-                document.getElementById('rep-content').innerHTML = 'Yükleniyor...';
-                document.getElementById('rep-name').innerText = name;
-                const res = await this.post('/parent/report', { student_id: id });
-                document.getElementById('rep-content').innerHTML = `<p><b>Oyun:</b> ${res.total_games} | <b>Galibiyet:</b> ${res.wins}</p><div style="background:#334155; padding:10px; margin-top:10px; font-style:italic;">"${res.kaspar_comment}"</div>`;
-            }
-            showAddStudent() { document.getElementById('modal-add-student').classList.remove('hidden'); }
-            async linkStudent() {
-                const code = document.getElementById('link-code').value;
-                const res = await this.post('/auth/code/claim', { parent_id: this.user.user_id, code: code });
-                alert(res.message);
-                if (res.status === 'success') { document.getElementById('modal-add-student').classList.add('hidden'); this.loadMyStudents(); }
-            }
+            <!-- Mühendis İstatistikleri -->
+            <div id="engineer-stats" class="role-specific-ui hidden">
+                <h4 style="margin-bottom:10px; color:var(--role-accent);">Sistem Kaynakları ⚙️</h4>
+                <div class="stat-label">CPU Kullanımı: <span id="cpu-value">--</span></div>
+                <div class="progress-bar-container"><div id="cpu-bar" class="progress-bar" style="width: 0%;"></div></div>
+                <div class="stat-label">RAM Kullanımı: <span id="ram-value">--</span></div>
+                <div class="progress-bar-container"><div id="ram-bar" class="progress-bar" style="width: 0%;"></div></div>
+                <div class="stat-label">Disk: <span id="disk-value">--</span></div>
+                <div class="progress-bar-container"><div id="disk-bar" class="progress-bar" style="width: 0%;"></div></div>
+            </div>
+        </div>
 
-            // --- ADMIN ---
-            async initAdmin() {
-                document.getElementById('screen-auth').classList.add('hidden');
-                document.getElementById('screen-admin').classList.remove('hidden');
-                this.loadAdminData();
-            }
-            async loadAdminData() {
-                const list = document.getElementById('admin-user-list');
-                list.innerHTML = 'Yükleniyor...';
-                try {
-                    const res = await this.post('/admin/users', { role: 'engineer' });
-                    if(res.status==='error') { list.innerHTML=res.message; return; }
-                    
-                    let html = '<table><tr><th>User</th><th>Rol</th><th>Durum</th><th>İşlem</th></tr>';
-                    res.users.forEach(u => {
-                        const status = u.is_approved ? '<span class="status-badge approved">Aktif</span>' : '<span class="status-badge pending">Bekliyor</span>';
-                        let actions = `<button class="btn btn-small" onclick="app.showResetPassword(${u.id}, '${u.username}')">🔑</button>`;
-                        if(!u.is_approved) actions += ` <button class="btn btn-small btn-green" onclick="app.approveUser(${u.id})">✅</button>`;
-                        actions += ` <button class="btn btn-small btn-red" onclick="app.deleteUser(${u.id})">🗑️</button>`;
-                        html += `<tr><td>${u.username}</td><td>${u.role}</td><td>${status}</td><td>${actions}</td></tr>`;
-                    });
-                    html += '</table>';
-                    list.innerHTML = html;
-                } catch(e) { list.innerHTML = "Veri alınamadı."; }
-            }
-            async approveUser(id) { await this.post('/admin/approve', { user_id: id, role: 'engineer' }); this.loadAdminData(); }
-            async deleteUser(id) { if(confirm('Silinsin mi?')) { await this.post('/admin/delete', { user_id: id, role: 'engineer' }); this.loadAdminData(); } }
+        <div class="container">
+            <div style="position:absolute; top:10px; right:10px; z-index: 10; display: flex; gap: 10px;">
+                <span id="current-user-badge" style="background:#334155; padding:8px 15px; border-radius:20px; font-size:0.85rem;"></span>
+                <button onclick="logout()" style="background:#ef4444; color:white; border:none; border-radius:5px; cursor:pointer; padding:8px 15px; font-size: 0.9rem;">Çıkış</button>
+            </div>
 
-            // --- PASSWORD ---
-            showResetPassword(tId=null, tName=null) {
-                if(!this.user && !tId) return alert("Yönetici ile iletişime geçin.");
-                currentReportId = tId || this.user.user_id;
-                document.getElementById('modal-reset-pw').classList.remove('hidden');
-                document.getElementById('reset-username').value = tName || (this.user ? this.user.username : 'Kullanıcı');
-            }
-            async doResetPassword() {
-                const newPw = document.getElementById('new-password').value;
-                const res = await this.post('/auth/password/reset', { requester_id: this.user.user_id, requester_role: this.user.role, target_user_id: currentReportId, new_password: newPw });
-                alert(res.message);
-                if(res.status==='success') document.getElementById('modal-reset-pw').classList.add('hidden');
-            }
+            <!-- ÖĞRENCI VIEW -->
+            <div id="student-view" class="role-view" style="width: 100%;">
+                <h2 style="color:var(--role-accent); margin-top:0;">🦁 Kaspar Arena</h2>
+                <div class="board-wrapper">
+                    <div id="board"></div>
+                </div>
+                <div id="status" style="font-weight: bold; margin: 10px 0;">Sıra Beyazda</div>
+                <div class="button-group">
+                    <button class="btn" onclick="resetBoard()">🔄 Yeni Oyun</button>
+                    <button class="btn btn-outline" id="undo-btn" onclick="undoMove()">↩️ Hamleyi Geri Al</button>
+                    <button class="btn btn-purple" id="ai-move-btn" onclick="makeBestMove()">🤖 Kaspar Oynasın</button>
+                    <button class="btn-link" onclick="askKaspar()">💡 İpucu Al</button>
+                </div>
+            </div>
 
-            async post(ep, data={}) {
-                try {
-                    const r = await fetch(API_URL + ep, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Kaspar-Key': API_KEY }, body: JSON.stringify(data) });
-                    return await r.json();
-                } catch(e) { return {status:'error', message:'Bağlantı hatası'}; }
-            }
-        }
-        window.app = new App();
-    </script>
+            <!-- EBEVEYN VIEW -->
+            <div id="parent-view" class="role-view hidden" style="width: 100%;">
+                <h2 style="color:var(--role-accent); margin-top:0;">🏠 Veli Gözetim Merkezi</h2>
+                
+                <!-- Öğrenci Seçici -->
+                <div class="student-selector" id="parent-student-selector">
+                    <button class="student-selector-btn active" data-student="yegen" onclick="selectParentStudent('yegen')">👦 Yeğen</button>
+                    <button class="student-selector-btn" data-student="omer" onclick="selectParentStudent('omer')">🧒 Ömer Faruk</button>
+                </div>
+                
+                <!-- ELO Grafiği -->
+                <div class="chart-container">
+                    <canvas id="eloChart"></canvas>
+                </div>
+                
+                <!-- Aktivite Listesi -->
+                <div style="margin-top: 20px; text-align: left; width: 100%; max-width: 700px;">
+                    <h4 style="color: var(--role-accent);">Son Aktiviteler</h4>
+                    <div id="activity-list"></div>
+                </div>
+            </div>
+
+            <!-- MÜHENDİS VIEW -->
+            <div id="engineer-view" class="role-view hidden" style="width: 100%;">
+                <h2 style="color:var(--role-accent); margin-top:0;">🛠️ Mühendislik & PowerPool</h2>
+                <div class="terminal" id="terminal-output"></div>
+                <div class="button-group" style="margin-top: 15px;">
+                    <button class="btn" onclick="updatePowerPoolStatus()">🔄 Yenile</button>
+                    <button class="btn btn-purple" onclick="testAPI()">🧪 API Test</button>
+                    <button class="btn btn-gold" onclick="showAdminPanel()">👥 Kullanıcılar</button>
+                </div>
+                
+                <!-- Admin Panel -->
+                <div id="admin-panel" class="hidden" style="margin-top: 20px; width: 100%;">
+                    <h4 style="color: var(--role-accent);">Kullanıcı Yönetimi</h4>
+                    <div id="users-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>
