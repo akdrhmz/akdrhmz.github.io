@@ -166,8 +166,12 @@
             <span style="color:#ef4444;">🛠️ Sistem Yönetimi</span>
             <button onclick="location.reload()" style="background:none; border:none; color:white;">Çıkış</button>
         </header>
+        <div style="padding:15px; background:#334155; margin-bottom:10px;">
+            <h4 style="margin:0 0 10px 0;">Beyin Durumu 🧠</h4>
+            <div id="admin-system-stats" style="font-family:monospace; font-size:0.8rem; color:#0f0;">Yükleniyor...</div>
+        </div>
         <div class="list-container">
-            <h3>Tüm Kullanıcılar</h3>
+            <h3>Kullanıcılar</h3>
             <div id="admin-user-list"></div>
         </div>
     </div>
@@ -231,7 +235,8 @@
                 document.getElementById('screen-auth').classList.remove('hidden');
                 document.getElementById('auth-title').innerText = role === 'engineer' ? 'Mühendis Girişi' : (role === 'parent' ? 'Veli Girişi' : 'Öğrenci Girişi');
                 
-                if(role === 'parent' || role === 'engineer') document.getElementById('btn-reg').classList.add('hidden');
+                // Mühendis hariç herkes kayıt olabilir
+                if(role === 'engineer') document.getElementById('btn-reg').classList.add('hidden');
                 else document.getElementById('btn-reg').classList.remove('hidden');
             }
 
@@ -338,21 +343,51 @@
                 document.getElementById('screen-auth').classList.add('hidden');
                 document.getElementById('screen-admin').classList.remove('hidden');
                 
+                // Sistem durumunu çek
+                this.loadSystemStats();
+                setInterval(() => this.loadSystemStats(), 5000); // 5 saniyede bir güncelle
+
                 const res = await this.post('/admin/users', { role: 'engineer' });
                 const list = document.getElementById('admin-user-list');
                 
                 let html = '<table><tr><th>ID</th><th>Kullanıcı</th><th>Rol</th><th>Level</th><th>İşlem</th></tr>';
-                res.users.forEach(u => {
-                    html += `<tr>
-                        <td>${u.id}</td>
-                        <td>${u.username}</td>
-                        <td>${u.role}</td>
-                        <td>${u.current_level}</td>
-                        <td><button class="btn" style="padding:5px; font-size:0.8rem;" onclick="app.showResetPassword(${u.id}, '${u.username}')">Şifre</button></td>
-                    </tr>`;
-                });
+                if(res.users) {
+                    res.users.forEach(u => {
+                        html += `<tr>
+                            <td>${u.id}</td>
+                            <td>${u.username}</td>
+                            <td>${u.role}</td>
+                            <td>${u.current_level}</td>
+                            <td><button class="btn" style="padding:5px; font-size:0.8rem;" onclick="app.showResetPassword(${u.id}, '${u.username}')">Şifre</button></td>
+                        </tr>`;
+                    });
+                }
                 html += '</table>';
                 list.innerHTML = html;
+            }
+            
+            async loadSystemStats() {
+                try {
+                    const sys = await this.post('/system'); // GET istiyor ama post helper'ımız var, backend'e bakalım
+                    // Backend'de /api/system GET metodunu istiyor. Helper'ı güncelleyelim.
+                    
+                    // Manuel fetch (GET)
+                    const r1 = await fetch(API_URL + '/system', { headers: {'X-Kaspar-Key': API_KEY} });
+                    const s1 = await r1.json();
+                    
+                    const r2 = await fetch(API_URL + '/powerpool', { headers: {'X-Kaspar-Key': API_KEY} });
+                    const s2 = await r2.json();
+                    
+                    let html = `CPU: ${s1.cpu}% | RAM: ${s1.ram}% | Disk: ${s1.disk}%<br>`;
+                    html += `PowerPool: ${s2.batteries.filter(b=>b.active).length}/${s2.batteries.length} Aktif<br>`;
+                    s2.batteries.forEach(b => {
+                        html += `• ${b.email}: ${b.active?'🟢':'🔴'} (Err: ${b.errors})<br>`;
+                    });
+                    
+                    document.getElementById('admin-system-stats').innerHTML = html;
+                } catch(e) {
+                    document.getElementById('admin-system-stats').innerText = "Bağlantı yok...";
+                }
             }
 
             // --- PASSWORD RESET ---
