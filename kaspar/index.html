@@ -304,8 +304,8 @@
         var progressChart = null;
         var isConnected = false;
 
-        // API URL - Tailscale üzerinden erişim
-        const API_URL = 'https://kadir-pc.taildc8da7.ts.net:5000/api';
+        // API URL - Tailscale Funnel (Port 443 -> 5000)
+        const API_URL = 'https://kadir-pc.taildc8da7.ts.net/api';
         
         // Fallback: Aynı sunucuda çalışıyorsa
         const API_URL_LOCAL = '/brain/api';
@@ -424,6 +424,19 @@
             loadStudentStats();
         }
 
+        function onDragStart(source, piece, position, orientation) {
+            // Oyun bittiyse taş oynatma
+            if (game.game_over()) return false;
+            
+            // Sadece kendi rengini oynat (Öğrenci her zaman Beyaz başlar varsayımıyla)
+            // Eğer rol öğrenciyse ve sıra beyazda değilse (veya tam tersi) engelle
+            // Şimdilik basit kural: Sıra kimdeyse o rengi oynatabilsin
+            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+                return false;
+            }
+        }
+
         function initChess() {
             const boardWrapper = document.querySelector('.board-wrapper');
             const size = Math.min(boardWrapper.offsetWidth, 500);
@@ -433,6 +446,7 @@
                     draggable: true,
                     position: 'start',
                     pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
+                    onDragStart: onDragStart,
                     onDrop: function(source, target) {
                         var move = game.move({ from: source, to: target, promotion: 'q' });
                         if (move === null) return 'snapback';
