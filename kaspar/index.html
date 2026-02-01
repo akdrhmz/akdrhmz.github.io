@@ -111,6 +111,7 @@
             height: 100% !important;
             border: 5px solid #334155;
             border-radius: 8px;
+            touch-action: none; /* Mobil kaydırmayı engelle */
         }
         
         .btn { background: var(--role-accent); color: #0f172a; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
@@ -464,10 +465,13 @@
                         if (move === null) return 'snapback';
                         updateStatus();
                         
-                        // Oyun bittiyse sonucu kaydet
+                        // Oyun bittiyse
                         if (game.game_over()) {
-                            if (game.in_checkmate()) {
-                                saveGameResult(game.turn() === 'b'); // Beyaz kazandıysa
+                           checkGameEnd();
+                        } else {
+                            // Sıra siyaha (Kaspar'a) geçtiyse otomatik oyna
+                            if (game.turn() === 'b' && currentRole === 'student') {
+                                setTimeout(makeBestMove, 500); // Yarım saniye bekle ve oyna
                             }
                         }
                     },
@@ -493,6 +497,30 @@
             document.getElementById('status').innerText = status;
         }
 
+        // Oyun sonu kontrolü ve DB kaydı
+        async function checkGameEnd() {
+            let result = 'draw';
+            if (game.in_checkmate()) {
+                result = game.turn() === 'b' ? 'win' : 'loss'; // Beyaz (Öğrenci) kazandı mı?
+            }
+            
+            // Local güncelle
+            saveGameResult(result === 'win');
+            
+            // Backend'e bildir
+            try {
+                const moves = game.history().length;
+                await fetch(`${getAPIUrl()}/game/end`, {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify({ result: result, moves: moves })
+                });
+                console.log("Oyun sonucu kaydedildi:", result);
+            } catch(e) {
+                console.error("Kayıt hatası:", e);
+            }
+        }
+
         async function makeBestMove() {
             if (game.game_over()) return;
             
@@ -506,14 +534,20 @@
                     headers: getHeaders(),
                     body: JSON.stringify({ fen: game.fen(), role: currentRole })
                 });
+                
+                if (!response.ok) {
+                    throw new Error(`API Hatası: ${response.status}`);
+                }
+
                 const data = await response.json();
                 if (data.status === 'success') {
-                    game.move(data.best_move);
+                    // Hamleyi yap
+                    game.move(data.best_move, { sloppy: true }); // Esnek hamle kabulü
                     board.position(game.fen());
                     updateStatus();
                     document.getElementById('ai-thought').innerHTML = `🦁 <b>Kaspar:</b> ${data.comment}`;
                     
-                    if (game.game_over() && game.in_checkmate()) {
+                    if (game.game_over()) {
                         saveGameResult(false); // Kaspar kazandı
                     }
                 } else {
