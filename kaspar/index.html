@@ -4,753 +4,408 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kaspar Satranç Akademisi</title>
+    <!-- Chessboard.js & Chess.js -->
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --container-bg: #1e293b;
-            --text-color: #f8fafc;
-            --primary-blue: #38bdf8;
-            --accent-gold: #fbbf24;
-            --accent-green: #22c55e;
-            --accent-blue: #3b82f6;
-            --stat-bg: #334155;
-            --role-accent: var(--primary-blue);
-        }
-
-        body.role-student { --role-accent: var(--accent-gold); }
-        body.role-parent { --role-accent: var(--accent-green); }
-        body.role-engineer { --role-accent: var(--accent-blue); }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
-        .pulse { animation: pulse 1.5s infinite; }
-        
-        * { box-sizing: border-box; }
-        
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .main-layout {
-            display: flex;
-            gap: 20px;
-            align-items: stretch;
-            max-width: 1400px;
-            width: 100%;
-            padding: 15px;
-            margin: 0 auto;
-            min-height: 100vh;
-        }
-
-        .side-panel {
-            flex: 1;
-            min-width: 280px;
-            max-width: 350px;
-            background: var(--container-bg);
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            border-top: 5px solid var(--role-accent);
-        }
-
-        .container {
-            flex: 2;
-            background: var(--container-bg);
-            padding: 1.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            text-align: center;
-            position: relative;
-            border-top: 5px solid var(--role-accent);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .hidden { display: none !important; }
-
-        .role-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin: 30px 0; width: 100%; max-width: 500px; }
-        .role-card { background: #334155; padding: 20px; border-radius: 15px; cursor: pointer; transition: 0.3s; border: 2px solid transparent; }
-        .role-card:hover { border-color: var(--primary-blue); transform: translateY(-5px); }
-        .role-card span { font-size: 2rem; }
-
-        .stat-box { background: var(--stat-bg); padding: 15px; border-radius: 12px; border-bottom: 3px solid var(--role-accent); }
-        .stat-value { font-size: 1.5rem; font-weight: bold; color: var(--role-accent); }
-        .stat-label { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; }
-
-        .widget { background: #334155; padding: 15px; border-radius: 15px; margin-bottom: 15px; text-align: left; }
-        .widget-title { font-size: 0.9rem; font-weight: bold; color: var(--role-accent); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-
-        .kaspar-bubble { background: #334155; padding: 15px; border-radius: 15px; border-left: 5px solid var(--role-accent); position: relative; min-height: 60px; }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal { background: var(--container-bg); padding: 30px; border-radius: 20px; border: 3px solid var(--accent-gold); max-width: 400px; text-align: center; }
-
-        /* Satranç Tahtası - Tam Responsive */
-        .board-wrapper {
-            width: 100%;
-            max-width: 500px;
-            aspect-ratio: 1;
-            margin: 10px auto;
-        }
-        
-        #board {
-            width: 100% !important;
-            height: 100% !important;
-            border: 5px solid #334155;
-            border-radius: 8px;
-            touch-action: none; /* Mobil kaydırmayı engelle */
-        }
-        
-        .btn { background: var(--role-accent); color: #0f172a; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
-        .btn:hover { opacity: 0.9; transform: scale(1.02); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-gold { background: var(--accent-gold); }
-        .btn-purple { background: #a855f7; color: white; }
-        .btn-link { background: none; color: var(--role-accent); text-decoration: underline; font-size: 0.8rem; cursor: pointer; border: none; padding: 8px; }
-
-        .progress-bar-container { background: #334155; border-radius: 10px; height: 10px; margin: 10px 0; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--role-accent); width: 0%; transition: width 1s ease-in-out; }
-        
-        .list-item { background: #334155; margin-bottom: 8px; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--role-accent); }
-        
-        .terminal { background: #000; color: #0f0; font-family: 'Courier New', Courier, monospace; padding: 15px; border-radius: 10px; text-align: left; height: 250px; overflow-y: auto; font-size: 0.8rem; border: 1px solid #334155; width: 100%; }
-        .terminal-line { margin-bottom: 4px; word-break: break-all; }
-
-        .button-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 15px; }
-
-        .connection-status { 
-            position: fixed; 
-            bottom: 10px; 
-            right: 10px; 
-            padding: 8px 15px; 
-            border-radius: 20px; 
-            font-size: 0.75rem;
-            z-index: 100;
-        }
-        .status-online { background: #22c55e; color: white; }
-        .status-offline { background: #ef4444; color: white; }
-
-        /* Mobil Responsive */
-        @media (max-width: 900px) { 
-            .main-layout { 
-                flex-direction: column; 
-                padding: 10px;
-                gap: 15px;
-            } 
-            .side-panel { 
-                width: 100%; 
-                max-width: 100%;
-                order: 2;
-                padding: 15px;
-            }
-            .container { 
-                width: 100%; 
-                order: 1; 
-                padding: 1rem;
-            }
-            .board-wrapper {
-                max-width: 100%;
-                width: calc(100vw - 60px);
-            }
-            .role-selector {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            .role-card {
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                padding: 15px;
-            }
-            .role-card span { font-size: 1.5rem; }
-            .button-group {
-                flex-direction: column;
-                width: 100%;
-            }
-            .button-group .btn {
-                width: 100%;
-            }
-        }
-        
-        @media (max-width: 400px) {
-            .stat-value { font-size: 1.2rem; }
-            .terminal { height: 180px; font-size: 0.7rem; }
-        }
-    </style>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --accent-color: #38bdf8;
+            --text-color: #f8fafc;
+            --board-border: #334155;
+        }
+
+        /* Mobil Optimize: Kaydırmayı engelle */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            touch-action: none; /* Tüm sayfada zoom/pan engelle */
+            overscroll-behavior: none;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Header */
+        header {
+            padding: 10px 15px;
+            background: var(--panel-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--board-border);
+            z-index: 10;
+        }
+
+        .brand { font-size: 1.2rem; font-weight: bold; color: var(--accent-color); display: flex; align-items: center; gap: 8px; }
+        .connection-dot { width: 10px; height: 10px; border-radius: 50%; background: #ef4444; display: inline-block; }
+        .online { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
+
+        /* Main Game Area */
+        .game-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            gap: 15px;
+        }
+
+        .board-container {
+            width: 100%;
+            aspect-ratio: 1;
+            max-height: 70vh;
+            touch-action: none; /* Tahtada dokunmayı browser'a bırakma */
+        }
+
+        /* Kaspar Bubble */
+        .kaspar-bubble {
+            background: var(--panel-bg);
+            padding: 12px;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-color);
+            width: 100%;
+            min-height: 50px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        /* Controls */
+        .controls {
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            background: var(--panel-bg);
+            border-top: 2px solid var(--board-border);
+        }
+
+        .btn {
+            background: var(--accent-color);
+            color: #0f172a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            flex: 1;
+            max-width: 150px;
+        }
+        .btn:active { transform: scale(0.96); }
+        .btn-secondary { background: #475569; color: white; }
+
+        /* Login Modal */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .role-card {
+            background: var(--panel-bg);
+            padding: 20px;
+            margin: 10px;
+            border-radius: 15px;
+            width: 250px;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .role-card:hover { border-color: var(--accent-color); }
+        
+        .hidden { display: none !important; }
+        .thinking { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+    </style>
 </head>
 <body>
 
-    <!-- Bağlantı Durumu -->
-    <div id="connection-status" class="connection-status status-offline">🔴 Bağlanıyor...</div>
-
-    <div id="golden-tip-modal" class="modal-overlay hidden">
-        <div class="modal">
-            <h2 style="color: var(--accent-gold);">🦁 Kaspar'ın Altın Öğüdü</h2>
-            <div id="golden-tip-content" style="margin: 20px 0; font-style: italic;"></div>
-            <button class="btn btn-gold" onclick="closeModal('golden-tip-modal')">Teşekkürler Kaspar!</button>
+    <!-- Login Screen -->
+    <div id="login-screen" class="modal">
+        <h1 style="color: var(--accent-color); margin-bottom: 30px;">🦁 Kaspar Akademi</h1>
+        <div class="role-card" onclick="app.login('student')">
+            <div style="font-size: 3rem;">🎓</div>
+            <h3>Öğrenci</h3>
+            <small>Şifre: 1234</small>
+        </div>
+        <div class="role-card" onclick="app.login('engineer')">
+            <div style="font-size: 3rem;">🛠️</div>
+            <h3>Mühendis</h3>
+            <small>Şifre: jarvis</small>
         </div>
     </div>
 
-    <div id="login-screen" class="container" style="max-width: 600px; margin: 20px auto;">
-        <h1 style="color: var(--primary-blue);">🦁 Kaspar</h1>
-        <p>Satranç Akademisi - Junior</p>
-        <div class="role-selector">
-            <div class="role-card" onclick="openLogin('student')"><span>🎓</span><h3>Öğrenci</h3></div>
-            <div class="role-card" onclick="openLogin('parent')"><span>🏠</span><h3>Ebeveyn</h3></div>
-            <div class="role-card" onclick="openLogin('engineer')"><span>🛠️</span><h3>Mühendis</h3></div>
-        </div>
-        <div id="auth-panel" class="hidden">
-            <h4 id="auth-title">Giriş Yap</h4>
-            <input type="password" id="auth-input" placeholder="Şifre" style="background:#0f172a; color:white; padding:12px; border-radius:8px; border:1px solid #475569; text-align:center; width: 200px; font-size: 1rem;">
-            <br><br>
-            <button class="btn" onclick="handleLogin()">Giriş</button>
-            <br>
-            <button class="btn-link" onclick="forgotPassword()">Şifremi Unuttum</button>
-        </div>
-    </div>
+    <!-- App Interface -->
+    <div id="app" class="app-container hidden">
+        <header>
+            <div class="brand">
+                <span>🦁 Kaspar</span>
+                <span id="conn-dot" class="connection-dot"></span>
+            </div>
+            <div id="user-info" style="font-size: 0.8rem; opacity: 0.8;">Misafir</div>
+        </header>
 
-    <div id="main-layout" class="main-layout hidden">
-        <div class="side-panel">
-            <div style="text-align:center;"><span style="font-size:3rem;" id="side-icon">🦁</span><h3 id="side-title">Kaspar Mentor</h3></div>
-            <div class="kaspar-bubble"><div id="ai-thought">Merhaba Şampiyon! Hamle sırası sende.</div></div>
-            
-            <div id="student-stats" class="role-specific-ui">
-                <h4 style="margin-bottom:10px; color:var(--role-accent);">Başarıların 🏆</h4>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="stat-box"><div class="stat-value" id="stat-score">--</div><div class="stat-label">Puanın</div></div>
-                    <div class="stat-box"><div class="stat-value" id="stat-wins">--</div><div class="stat-label">Galibiyet</div></div>
-                    <div class="stat-box"><div class="stat-value" id="stat-games">--</div><div class="stat-label">Toplam Oyun</div></div>
-                    <div class="stat-box"><div class="stat-value" id="stat-streak">--</div><div class="stat-label">Seri</div></div>
-                </div>
+        <div class="game-area">
+            <!-- AI Mesajı -->
+            <div class="kaspar-bubble">
+                <span style="font-size: 1.5rem;">💭</span>
+                <div id="ai-text">Merhaba! Hadi satranç oynayalım. Beyaz sensin.</div>
             </div>
 
-            <div id="parent-stats" class="role-specific-ui hidden">
-                <h4 style="margin-bottom:10px; color:var(--role-accent);">Hızlı Bakış 📈</h4>
-                <div class="stat-box" style="margin-bottom:10px;"><div class="stat-value" id="parent-weekly-progress">--</div><div class="stat-label">Haftalık Gelişim</div></div>
-                <div class="stat-box" style="margin-bottom:10px;"><div class="stat-value" id="parent-avg-time">--</div><div class="stat-label">Ort. Hamle Süresi</div></div>
-                <div class="stat-box"><div class="stat-value" id="parent-accuracy">--</div><div class="stat-label">Doğruluk Oranı</div></div>
+            <!-- Tahta -->
+            <div class="board-container">
+                <div id="board" style="width: 100%; height: 100%;"></div>
             </div>
 
-            <div id="engineer-stats" class="role-specific-ui hidden">
-                <h4 style="margin-bottom:10px; color:var(--role-accent);">Sistem Kaynakları ⚙️</h4>
-                <div class="stat-label">CPU Kullanımı: <span id="cpu-value">--</span></div>
-                <div class="progress-bar-container"><div id="cpu-bar" class="progress-bar" style="width: 0%;"></div></div>
-                <div class="stat-label">RAM Kullanımı: <span id="ram-value">--</span></div>
-                <div class="progress-bar-container"><div id="ram-bar" class="progress-bar" style="width: 0%;"></div></div>
-                <div class="stat-label">Disk: <span id="disk-value">--</span></div>
-                <div class="progress-bar-container"><div id="disk-bar" class="progress-bar" style="width: 0%;"></div></div>
-            </div>
+            <!-- Durum -->
+            <div id="status" style="font-size: 0.9rem; color: #94a3b8;">Sıra Beyazda</div>
         </div>
 
-        <div class="container">
-            <div style="position:absolute; top:10px; right:10px; z-index: 10;">
-                <button onclick="logout()" style="background:#ef4444; color:white; border:none; border-radius:5px; cursor:pointer; padding:8px 15px; font-size: 0.9rem;">Çıkış</button>
-            </div>
-
-            <div id="student-view" class="role-view" style="width: 100%;">
-                <h2 style="color:var(--role-accent); margin-top:0;">🦁 Kaspar Arena</h2>
-                <div class="board-wrapper">
-                    <div id="board"></div>
-                </div>
-                <div id="status" style="font-weight: bold; margin: 10px 0;">Sıra Beyazda</div>
-                <div class="button-group">
-                    <button class="btn" onclick="resetBoard()">Yeni Oyun</button>
-                    <button class="btn btn-purple" id="ai-move-btn" onclick="makeBestMove()">Kaspar Oynasın</button>
-                    <button class="btn-link" onclick="askKaspar()">💡 İpucu Al</button>
-                </div>
-            </div>
-
-            <div id="parent-view" class="role-view hidden" style="width: 100%;">
-                <h2 style="color:var(--role-accent); margin-top:0;">🏠 Veli Gözetim Merkezi</h2>
-                <div style="width: 100%; max-width: 600px; margin: 0 auto;">
-                    <canvas id="progressChart" height="200"></canvas>
-                </div>
-                <div style="margin-top: 20px; text-align: left;">
-                    <h4 style="color: var(--role-accent);">Son Aktiviteler</h4>
-                    <div id="activity-list"></div>
-                </div>
-            </div>
-
-            <div id="engineer-view" class="role-view hidden" style="width: 100%;">
-                <h2 style="color:var(--role-accent); margin-top:0;">🛠️ Mühendislik & PowerPool</h2>
-                <div class="terminal" id="terminal-output"></div>
-                <div class="button-group" style="margin-top: 15px;">
-                    <button class="btn" onclick="updatePowerPoolStatus()">🔄 Yenile</button>
-                    <button class="btn btn-purple" onclick="testAPI()">🧪 API Test</button>
-                </div>
-            </div>
+        <div class="controls">
+            <button class="btn btn-secondary" onclick="app.resetGame()">🔄 Yeni</button>
+            <button class="btn" onclick="app.askHint()">💡 İpucu</button>
         </div>
     </div>
 
     <script>
-        var currentRole = '';
-        var board = null;
-        var game = new Chess();
-        var progressChart = null;
-        var isConnected = false;
+        // --- CONFIGURATION ---
+        const CONFIG = {
+            apiKey: "kaspar_sec_eb82b49055236a3a862f42e53e8e8b97",
+            apiUrl: "https://kadir-pc.taildc8da7.ts.net/api", // Tailscale Funnel
+            passwords: {
+                student: "1234",
+                engineer: "jarvis",
+                parent: "ebeveyn"
+            }
+        };
 
-        // GÜVENLİK ANAHTARI (Faz 2)
-        const API_KEY = "kaspar_sec_eb82b49055236a3a862f42e53e8e8b97";
+        // --- APP LOGIC ---
+        class KasparApp {
+            constructor() {
+                this.game = new Chess();
+                this.board = null;
+                this.role = null;
+                this.isLocked = false; // AI düşünürken tahtayı kilitle
+                this.isConnected = false;
+                
+                this.checkConnection();
+                setInterval(() => this.checkConnection(), 30000);
+            }
 
-        // API URL - Tailscale Funnel (Port 443 -> 5000)
-        const API_URL = 'https://kadir-pc.taildc8da7.ts.net/api';
-        
-        // Fallback: Aynı sunucuda çalışıyorsa
-        const API_URL_LOCAL = '/brain/api';
-
-        // Helper: Auth Header Ekle
-        function getHeaders() {
-            return {
-                'Content-Type': 'application/json',
-                'X-Kaspar-Key': API_KEY
-            };
-        }
-
-        // Bağlantı kontrolü
-        async function checkConnection() {
-            const statusEl = document.getElementById('connection-status');
-            try {
-                // Status endpoint auth istemez ama yine de ekleyelim
-                const response = await fetch(`${API_URL}/status`, { timeout: 5000 });
-                if (response.ok) {
-                    isConnected = true;
-                    statusEl.className = 'connection-status status-online';
-                    statusEl.innerHTML = '🟢 Brain Online';
-                    return true;
-                }
-            } catch (e) {
-                // Fallback dene
+            // Bağlantı Kontrolü
+            async checkConnection() {
                 try {
-                    const response2 = await fetch(`${API_URL_LOCAL}/status`, { timeout: 5000 });
-                    if (response2.ok) {
-                        isConnected = true;
-                        statusEl.className = 'connection-status status-online';
-                        statusEl.innerHTML = '🟢 Brain Online (Local)';
-                        window.activeAPI = API_URL_LOCAL;
-                        return true;
-                    }
-                } catch (e2) {}
+                    const res = await fetch(`${CONFIG.apiUrl}/status`, { timeout: 3000 });
+                    this.isConnected = res.ok;
+                    document.getElementById('conn-dot').className = `connection-dot ${this.isConnected ? 'online' : ''}`;
+                } catch (e) {
+                    this.isConnected = false;
+                    document.getElementById('conn-dot').className = 'connection-dot';
+                    console.log("Bağlantı hatası:", e);
+                }
             }
-            
-            isConnected = false;
-            statusEl.className = 'connection-status status-offline';
-            statusEl.innerHTML = '🔴 Brain Offline';
-            return false;
-        }
 
-        function getAPIUrl() {
-            return window.activeAPI || API_URL;
-        }
-
-        // Sayfa yüklendiğinde bağlantı kontrolü
-        window.addEventListener('load', () => {
-            checkConnection();
-            setInterval(checkConnection, 30000); // 30 saniyede bir kontrol
-        });
-
-        function openLogin(role) {
-            currentRole = role;
-            document.getElementById('auth-panel').classList.remove('hidden');
-            document.getElementById('auth-title').innerText = role === 'student' ? 'Öğrenci Girişi' : (role === 'parent' ? 'Ebeveyn Girişi' : 'Mühendis Paneli');
-            document.getElementById('auth-input').focus();
-        }
-
-        function handleLogin() {
-            var val = document.getElementById('auth-input').value;
-            if((currentRole === 'student' && val === '1234') || (currentRole === 'parent' && val === 'ebeveyn') || (currentRole === 'engineer' && val === 'jarvis')) {
-                document.body.className = 'role-' + currentRole + ' fade-in';
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('main-layout').classList.remove('hidden');
-                setupPanelFeatures();
-                if (currentRole === 'student') setTimeout(initChess, 100);
-                else if (currentRole === 'parent') initParentView();
-                else if (currentRole === 'engineer') startEngineerPolling();
-            } else { alert('Hatalı şifre!'); }
-        }
-        
-        // Enter tuşu ile giriş
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !document.getElementById('auth-panel').classList.contains('hidden')) {
-                handleLogin();
+            // Giriş
+            login(role) {
+                const pin = prompt(`${role === 'student' ? 'Öğrenci' : 'Mühendis'} Şifresi:`);
+                if (pin === CONFIG.passwords[role]) {
+                    this.role = role;
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('app').classList.remove('hidden');
+                    document.getElementById('user-info').innerText = role.toUpperCase();
+                    
+                    // Tahtayı başlat (DOM render olduktan sonra)
+                    setTimeout(() => this.initBoard(), 100);
+                } else {
+                    alert("Hatalı şifre!");
+                }
             }
-        });
 
-        function logout() { location.reload(); }
-        
-        function forgotPassword() {
-            alert('Şifreler:\n• Öğrenci: 1234\n• Ebeveyn: ebeveyn\n• Mühendis: jarvis');
-        }
-
-        function setupPanelFeatures() {
-            document.querySelectorAll('.role-specific-ui, .role-view').forEach(el => el.classList.add('hidden'));
-            if (currentRole === 'student') {
-                document.getElementById('student-stats').classList.remove('hidden');
-                document.getElementById('student-view').classList.remove('hidden');
-                loadStudentStats();
-            } else if (currentRole === 'parent') {
-                document.getElementById('parent-stats').classList.remove('hidden');
-                document.getElementById('parent-view').classList.remove('hidden');
-            } else if (currentRole === 'engineer') {
-                document.getElementById('engineer-stats').classList.remove('hidden');
-                document.getElementById('engineer-view').classList.remove('hidden');
-            }
-        }
-
-        // Öğrenci istatistiklerini yükle
-        async function loadStudentStats() {
-            // Şimdilik localStorage'dan oku, ileride API'den çekilecek
-            const stats = JSON.parse(localStorage.getItem('kaspar_stats') || '{"score":850,"wins":0,"games":0,"streak":0}');
-            document.getElementById('stat-score').textContent = stats.score;
-            document.getElementById('stat-wins').textContent = stats.wins;
-            document.getElementById('stat-games').textContent = stats.games;
-            document.getElementById('stat-streak').textContent = stats.streak;
-        }
-
-        function saveGameResult(won) {
-            const stats = JSON.parse(localStorage.getItem('kaspar_stats') || '{"score":850,"wins":0,"games":0,"streak":0}');
-            stats.games++;
-            if (won) {
-                stats.wins++;
-                stats.streak++;
-                stats.score += 15;
-            } else {
-                stats.streak = 0;
-                stats.score = Math.max(100, stats.score - 10);
-            }
-            localStorage.setItem('kaspar_stats', JSON.stringify(stats));
-            loadStudentStats();
-        }
-
-        function onDragStart(source, piece, position, orientation) {
-            // Oyun bittiyse taş oynatma
-            if (game.game_over()) return false;
-            
-            // Sadece kendi rengini oynat (Öğrenci her zaman Beyaz başlar varsayımıyla)
-            // Eğer rol öğrenciyse ve sıra beyazda değilse (veya tam tersi) engelle
-            // Şimdilik basit kural: Sıra kimdeyse o rengi oynatabilsin
-            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-                return false;
-            }
-        }
-
-        function initChess() {
-            const boardWrapper = document.querySelector('.board-wrapper');
-            const size = Math.min(boardWrapper.offsetWidth, 500);
-            
-            if (!board) {
-                board = Chessboard('board', {
+            // Tahta Kurulumu
+            initBoard() {
+                const boardEl = document.getElementById('board');
+                
+                this.board = Chessboard('board', {
                     draggable: true,
                     position: 'start',
                     pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
-                    onDragStart: onDragStart,
-                    onDrop: function(source, target) {
-                        var move = game.move({ from: source, to: target, promotion: 'q' });
-                        if (move === null) return 'snapback';
-                        updateStatus();
-                        
-                        // Oyun bittiyse
-                        if (game.game_over()) {
-                           checkGameEnd();
-                        } else {
-                            // Sıra siyaha (Kaspar'a) geçtiyse otomatik oyna
-                            if (game.turn() === 'b' && currentRole === 'student') {
-                                setTimeout(makeBestMove, 500); // Yarım saniye bekle ve oyna
-                            }
-                        }
-                    },
-                    onSnapEnd: function() {
-                        board.position(game.fen());
-                    }
+                    onDragStart: (source, piece) => this.onDragStart(source, piece),
+                    onDrop: (source, target) => this.onDrop(source, target),
+                    onSnapEnd: () => this.board.position(this.game.fen())
                 });
-            }
-            
-            // Resize handler
-            window.addEventListener('resize', () => {
-                if (board) board.resize();
-            });
-            
-            updateStatus();
-        }
 
-        function updateStatus() {
-            var status = game.turn() === 'w' ? 'Sıra Beyazda' : 'Sıra Siyahda';
-            if (game.in_checkmate()) status = "MAT! Oyun bitti.";
-            else if (game.in_draw()) status = "Berabere!";
-            else if (game.in_check()) status = (game.turn() === 'w' ? 'Beyaz' : 'Siyah') + ' ŞAH!';
-            document.getElementById('status').innerText = status;
-        }
-
-        // Oyun sonu kontrolü ve DB kaydı
-        async function checkGameEnd() {
-            let result = 'draw';
-            if (game.in_checkmate()) {
-                result = game.turn() === 'b' ? 'win' : 'loss'; // Beyaz (Öğrenci) kazandı mı?
-            }
-            
-            // Local güncelle
-            saveGameResult(result === 'win');
-            
-            // Backend'e bildir
-            try {
-                const moves = game.history().length;
-                await fetch(`${getAPIUrl()}/game/end`, {
-                    method: 'POST',
-                    headers: getHeaders(),
-                    body: JSON.stringify({ result: result, moves: moves })
-                });
-                console.log("Oyun sonucu kaydedildi:", result);
-            } catch(e) {
-                console.error("Kayıt hatası:", e);
-            }
-        }
-
-        async function makeBestMove() {
-            if (game.game_over()) return;
-            
-            const btn = document.getElementById('ai-move-btn');
-            btn.disabled = true;
-            document.getElementById('ai-thought').innerHTML = '<span class="pulse">🦁 Kaspar düşünüyor...</span>';
-            
-            try {
-                const response = await fetch(`${getAPIUrl()}/move`, {
-                    method: 'POST',
-                    headers: getHeaders(),
-                    body: JSON.stringify({ fen: game.fen(), role: currentRole })
-                });
+                // Resize handler (Responsive)
+                window.addEventListener('resize', () => this.board.resize());
                 
-                if (!response.ok) {
-                    throw new Error(`API Hatası: ${response.status}`);
-                }
+                // Mobil kaydırmayı engelle (Touch hack)
+                boardEl.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+            }
 
-                const data = await response.json();
-                if (data.status === 'success') {
-                    // Hamleyi yap
-                    game.move(data.best_move, { sloppy: true }); // Esnek hamle kabulü
-                    board.position(game.fen());
-                    updateStatus();
-                    document.getElementById('ai-thought').innerHTML = `🦁 <b>Kaspar:</b> ${data.comment}`;
-                    
-                    if (game.game_over()) {
-                        saveGameResult(false); // Kaspar kazandı
-                    }
+            onDragStart(source, piece) {
+                // Oyun bitti mi veya AI düşünüyor mu?
+                if (this.game.game_over() || this.isLocked) return false;
+                
+                // Sadece kendi rengini oynat (Öğrenci = Beyaz)
+                if (this.game.turn() === 'b' && this.role === 'student') return false;
+            }
+
+            onDrop(source, target) {
+                const move = this.game.move({
+                    from: source,
+                    to: target,
+                    promotion: 'q' // Otomatik vezir
+                });
+
+                if (move === null) return 'snapback';
+
+                this.updateStatus();
+                
+                // Hamle başarılı, sıra AI'da
+                if (!this.game.game_over()) {
+                    this.makeAiMove();
                 } else {
-                    document.getElementById('ai-thought').innerText = "Hata: " + (data.message || "Bilinmeyen hata");
+                    this.handleGameOver();
                 }
-            } catch (err) {
-                document.getElementById('ai-thought').innerText = "❌ Beyne ulaşılamadı! Bağlantıyı kontrol et.";
             }
-            
-            btn.disabled = false;
-        }
 
-        async function askKaspar() {
-            document.getElementById('ai-thought').innerHTML = '<span class="pulse">💭 Kaspar düşünüyor...</span>';
-            
-            try {
-                const response = await fetch(`${getAPIUrl()}/hint`, {
-                    method: 'POST',
-                    headers: getHeaders(),
-                    body: JSON.stringify({ fen: game.fen() })
-                });
-                const data = await response.json();
-                if (data.status === 'success') {
-                    document.getElementById('ai-thought').innerHTML = `💡 <b>İpucu:</b> ${data.hint}`;
-                } else {
-                    document.getElementById('ai-thought').innerText = "🦁 Kaspar: 'Merkez kareleri kontrol etmeye odaklan şampiyon!'";
-                }
-            } catch (err) {
-                document.getElementById('ai-thought').innerText = "🦁 Kaspar: 'Merkez kareleri kontrol etmeye odaklan şampiyon!'";
-            }
-        }
+            async makeAiMove() {
+                this.isLocked = true;
+                this.setAiThinking(true);
 
-        function resetBoard() {
-            game.reset();
-            board.start();
-            updateStatus();
-            document.getElementById('ai-thought').innerText = "Merhaba Şampiyon! Yeni oyun başladı. Hamle sırası sende.";
-        }
-
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-        // Ebeveyn Görünümü
-        async function initParentView() {
-            // Grafik
-            const ctx = document.getElementById('progressChart').getContext('2d');
-            
-            // localStorage'dan veri çek
-            const stats = JSON.parse(localStorage.getItem('kaspar_stats') || '{"score":850,"wins":0,"games":0,"streak":0}');
-            const history = JSON.parse(localStorage.getItem('kaspar_history') || '[]');
-            
-            // Son 7 günlük aktivite (şimdilik simüle)
-            const labels = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
-            const today = new Date().getDay();
-            const reorderedLabels = [...labels.slice(today), ...labels.slice(0, today)];
-            
-            // Gerçek veri yoksa örnek göster
-            const gameData = history.length > 0 ? history.slice(-7) : [0, 1, 0, 2, 1, 3, 2];
-            
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: reorderedLabels,
-                    datasets: [{
-                        label: 'Oynanan Oyun',
-                        data: gameData,
-                        borderColor: '#22c55e',
-                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { labels: { color: '#f8fafc' } }
-                    },
-                    scales: {
-                        y: { 
-                            beginAtZero: true,
-                            ticks: { color: '#94a3b8' },
-                            grid: { color: '#334155' }
-                        },
-                        x: { 
-                            ticks: { color: '#94a3b8' },
-                            grid: { color: '#334155' }
-                        }
-                    }
-                }
-            });
-            
-            // İstatistikler
-            document.getElementById('parent-weekly-progress').textContent = stats.games > 0 ? `+${stats.games}` : '--';
-            document.getElementById('parent-avg-time').textContent = '~15s';
-            document.getElementById('parent-accuracy').textContent = stats.games > 0 ? `%${Math.round((stats.wins / Math.max(1, stats.games)) * 100)}` : '--%';
-            
-            // Aktivite listesi
-            const activityList = document.getElementById('activity-list');
-            if (stats.games > 0) {
-                activityList.innerHTML = `
-                    <div class="list-item"><span>🏆 Toplam Oyun</span><span>${stats.games}</span></div>
-                    <div class="list-item"><span>✅ Kazanılan</span><span>${stats.wins}</span></div>
-                    <div class="list-item"><span>📈 Puan</span><span>${stats.score}</span></div>
-                    <div class="list-item"><span>🔥 Seri</span><span>${stats.streak}</span></div>
-                `;
-            } else {
-                activityList.innerHTML = '<div class="list-item"><span>Henüz oyun oynanmadı</span></div>';
-            }
-        }
-
-        // Mühendis Paneli - Canlı PowerPool Durumu
-        var engineerPollingInterval = null;
-        
-        function startEngineerPolling() {
-            updatePowerPoolStatus();
-            updateSystemResources();
-            engineerPollingInterval = setInterval(() => {
-                updatePowerPoolStatus();
-                updateSystemResources();
-            }, 5000);
-        }
-        
-        async function updateSystemResources() {
-            try {
-                const response = await fetch(`${getAPIUrl()}/system`, { headers: getHeaders() });
-                const data = await response.json();
-                
-                if (data.status === 'success') {
-                    document.getElementById('cpu-value').textContent = `${data.cpu}%`;
-                    document.getElementById('cpu-bar').style.width = `${data.cpu}%`;
-                    
-                    document.getElementById('ram-value').textContent = `${data.ram}%`;
-                    document.getElementById('ram-bar').style.width = `${data.ram}%`;
-                    
-                    document.getElementById('disk-value').textContent = `${data.disk}%`;
-                    document.getElementById('disk-bar').style.width = `${data.disk}%`;
-                }
-            } catch (e) {
-                // Fallback değerler
-                document.getElementById('cpu-value').textContent = 'N/A';
-                document.getElementById('ram-value').textContent = 'N/A';
-                document.getElementById('disk-value').textContent = 'N/A';
-            }
-        }
-        
-        async function updatePowerPoolStatus() {
-            const terminal = document.getElementById('terminal-output');
-            
-            try {
-                const response = await fetch(`${getAPIUrl()}/powerpool`, { headers: getHeaders() });
-                const data = await response.json();
-                
-                if (data.status === 'success') {
-                    let output = '<div class="terminal-line" style="color:#0ff;">⚡ POWERPOOL STATUS ⚡</div>';
-                    output += `<div class="terminal-line">Aktif Batarya: ${data.active}/${data.total}</div>`;
-                    output += `<div class="terminal-line">Toplam Kullanım: ${data.total_usage}</div>`;
-                    output += '<div class="terminal-line">─────────────────────</div>';
-                    
-                    data.batteries.forEach(b => {
-                        const icon = b.active ? '🟢' : '🔴';
-                        output += `<div class="terminal-line">${icon} ${b.email}</div>`;
-                        output += `<div class="terminal-line" style="color:#888;">   Kullanım: ${b.usage} | Hata: ${b.errors}</div>`;
-                        output += `<div class="terminal-line" style="color:#888;">   Son: ${b.last_used}</div>`;
-                    });
-                    
-                    output += '<div class="terminal-line">─────────────────────</div>';
-                    output += `<div class="terminal-line" style="color:#0f0;">[${new Date().toLocaleTimeString()}] Güncellendi ✓</div>`;
-                    
-                    terminal.innerHTML = output;
-                }
-            } catch (err) {
-                terminal.innerHTML = `<div class="terminal-line" style="color:#f00;">❌ Brain API bağlantısı yok!</div>
-                    <div class="terminal-line" style="color:#888;">Endpoint: ${getAPIUrl()}/powerpool</div>
-                    <div class="terminal-line" style="color:#888;">Hata: ${err.message}</div>
-                    <div class="terminal-line" style="color:#ff0;">Tailscale Funnel aktif mi kontrol et.</div>`;
-            }
-        }
-        
-        async function testAPI() {
-            const terminal = document.getElementById('terminal-output');
-            terminal.innerHTML = '<div class="terminal-line" style="color:#ff0;">🧪 API Test başlatılıyor...</div>';
-            
-            const endpoints = ['status', 'powerpool', 'health'];
-            let results = '';
-            
-            for (const ep of endpoints) {
                 try {
-                    const start = Date.now();
-                    const response = await fetch(`${getAPIUrl()}/${ep}`, { headers: getHeaders() });
-                    const elapsed = Date.now() - start;
+                    const response = await fetch(`${CONFIG.apiUrl}/move`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Kaspar-Key': CONFIG.apiKey
+                        },
+                        body: JSON.stringify({ 
+                            fen: this.game.fen(), 
+                            role: this.role 
+                        })
+                    });
+
                     const data = await response.json();
-                    results += `<div class="terminal-line" style="color:#0f0;">✓ /${ep} - ${elapsed}ms - ${JSON.stringify(data).substring(0, 50)}...</div>`;
+                    
+                    if (data.status === 'success') {
+                        // AI Hamlesi
+                        this.game.move(data.best_move, { sloppy: true });
+                        this.board.position(this.game.fen());
+                        
+                        // Yorumu göster
+                        document.getElementById('ai-text').innerHTML = data.comment;
+                    } else {
+                        throw new Error(data.message);
+                    }
+
                 } catch (e) {
-                    results += `<div class="terminal-line" style="color:#f00;">✗ /${ep} - ${e.message}</div>`;
+                    console.error("AI Hatası:", e);
+                    document.getElementById('ai-text').innerText = "Hmm, bağlantımda bir sorun var. Tekrar dener misin?";
+                } finally {
+                    this.isLocked = false;
+                    this.setAiThinking(false);
+                    this.updateStatus();
+                    
+                    if (this.game.game_over()) this.handleGameOver();
                 }
             }
-            
-            terminal.innerHTML = results;
+
+            async askHint() {
+                if (this.isLocked) return;
+                
+                document.getElementById('ai-text').innerText = "Sana bir ipucu bakıyorum...";
+                
+                try {
+                    const res = await fetch(`${CONFIG.apiUrl}/hint`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-Kaspar-Key': CONFIG.apiKey },
+                        body: JSON.stringify({ fen: this.game.fen() })
+                    });
+                    const data = await res.json();
+                    document.getElementById('ai-text').innerText = "💡 " + data.hint;
+                } catch (e) {
+                    document.getElementById('ai-text').innerText = "İpucu alamadım.";
+                }
+            }
+
+            updateStatus() {
+                let status = '';
+                const moveColor = this.game.turn() === 'w' ? 'Beyaz' : 'Siyah';
+
+                if (this.game.in_check()) status = `${moveColor} ŞAH!`;
+                else status = `Sıra ${moveColor}da`;
+
+                document.getElementById('status').innerText = status;
+            }
+
+            handleGameOver() {
+                let result = 'draw';
+                if (this.game.in_checkmate()) {
+                    result = this.game.turn() === 'w' ? 'loss' : 'win'; // Kim mat oldu?
+                }
+                
+                const msg = result === 'win' ? "Tebrikler! Kazandın! 🏆" : (result === 'loss' ? "Mat oldun! Bir dahakine..." : "Berabere!");
+                document.getElementById('ai-text').innerHTML = `<b>${msg}</b>`;
+                
+                // Sonucu kaydet
+                fetch(`${CONFIG.apiUrl}/game/end`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Kaspar-Key': CONFIG.apiKey },
+                    body: JSON.stringify({ result: result, moves: this.game.history().length })
+                });
+            }
+
+            resetGame() {
+                this.game.reset();
+                this.board.start();
+                this.isLocked = false;
+                this.updateStatus();
+                document.getElementById('ai-text').innerText = "Yeni oyun! Başarılar.";
+            }
+
+            setAiThinking(thinking) {
+                const bubble = document.querySelector('.kaspar-bubble');
+                if (thinking) {
+                    bubble.classList.add('thinking');
+                    document.getElementById('ai-text').innerText = "Kaspar düşünüyor...";
+                } else {
+                    bubble.classList.remove('thinking');
+                }
+            }
         }
-        
-        // Sayfa kapatılırken polling'i durdur
-        window.addEventListener('beforeunload', function() {
-            if (engineerPollingInterval) clearInterval(engineerPollingInterval);
-        });
+
+        // Başlat
+        window.app = new KasparApp();
+
     </script>
 </body>
 </html>
