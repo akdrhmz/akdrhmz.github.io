@@ -4,123 +4,217 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kaspar Satranç Akademisi</title>
+    <!-- Chessboard.js & Chess.js -->
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
     <style>
-        :root { --bg: #0f172a; --panel: #1e293b; --accent: #38bdf8; --text: #f8fafc; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: sans-serif; overflow: hidden; touch-action: none; }
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --accent-color: #38bdf8;
+            --accent-green: #22c55e;
+            --text-color: #f8fafc;
+            --accent-red: #ef4444;
+        }
+
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color); color: var(--text-color);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            overflow: hidden; touch-action: none; overscroll-behavior: none;
+        }
+
+        .app-container { display: flex; flex-direction: column; height: 100vh; max-width: 600px; margin: 0 auto; }
         .hidden { display: none !important; }
-        .app { display: flex; flex-direction: column; height: 100vh; max-width: 600px; margin: 0 auto; }
+
+        /* MODALS */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
         
-        /* Modal & Auth */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .card { background: var(--panel); padding: 20px; margin: 10px; border-radius: 15px; width: 280px; text-align: center; border: 2px solid transparent; cursor: pointer; }
-        .card:hover { border-color: var(--accent); }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; background: #020617; color: white; text-align: center; font-size: 1rem; }
+        .role-btn {
+            background: var(--panel-bg); padding: 20px; margin: 10px; border-radius: 15px;
+            width: 250px; text-align: center; cursor: pointer; border: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .role-btn:active { transform: scale(0.95); border-color: var(--accent-color); }
         
-        /* UI Components */
-        .btn { background: var(--accent); color: #000; padding: 12px; border: none; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 5px; }
-        .btn-green { background: #22c55e; color: white; }
-        header { padding: 15px; background: var(--panel); display: flex; justify-content: space-between; align-items: center; }
+        .input-group { margin: 10px 0; width: 80%; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #020617; color: white; font-size: 1rem; text-align: center; }
+
+        /* GAME UI */
+        header {
+            padding: 15px; background: var(--panel-bg); border-bottom: 1px solid #334155;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .user-badge { background: #334155; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; }
+
+        .game-area { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 10px; gap: 15px; }
         
-        /* Game */
-        .game-area { flex: 1; display: flex; flex-direction: column; padding: 10px; gap: 15px; justify-content: center; }
-        .bubble { background: var(--panel); padding: 15px; border-radius: 12px; border-left: 4px solid var(--accent); min-height: 50px; display: flex; align-items: center; gap: 10px; }
-        #board { width: 100%; aspect-ratio: 1; border: 3px solid #334155; border-radius: 8px; }
+        .kaspar-bubble {
+            background: var(--panel-bg); padding: 15px; border-radius: 12px;
+            border-left: 4px solid var(--accent-color);
+            display: flex; align-items: center; gap: 10px; font-size: 0.95rem;
+            min-height: 60px;
+        }
         
-        /* Parent */
-        .list-item { background: var(--panel); padding: 15px; margin-bottom: 10px; border-radius: 10px; display: flex; justify-content: space-between; cursor: pointer; }
-        .code-display { font-size: 2rem; letter-spacing: 5px; color: var(--accent); font-weight: bold; margin: 20px 0; }
+        .board-wrapper { width: 100%; aspect-ratio: 1; touch-action: none; }
+        #board { width: 100%; height: 100%; border-radius: 8px; border: 3px solid #334155; }
+
+        .controls { padding: 15px; display: flex; gap: 10px; background: var(--panel-bg); }
+        .btn { background: var(--accent-color); color: #0f172a; border: none; padding: 12px; border-radius: 8px; font-weight: bold; flex: 1; cursor: pointer; }
+        .btn-green { background: var(--accent-green); color: white; }
+        .btn-red { background: var(--accent-red); color: white; }
+
+        /* LISTS */
+        .list-container { width: 100%; padding: 20px; overflow-y: auto; flex: 1; }
+        .list-item { 
+            background: var(--panel-bg); padding: 15px; margin-bottom: 10px; 
+            border-radius: 10px; display: flex; justify-content: space-between; 
+            align-items: center; cursor: pointer; 
+        }
+        .list-item:hover { background: #334155; }
+        
+        .code-display { font-size: 2rem; letter-spacing: 5px; color: var(--accent-color); font-weight: bold; margin: 20px 0; }
+        
+        /* ADMIN TABLE */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #334155; }
+        th { color: var(--accent-color); }
     </style>
 </head>
 <body>
 
-    <!-- GİRİŞ -->
+    <!-- 1. GİRİŞ EKRANI -->
     <div id="screen-home" class="modal">
-        <h1 style="color:var(--accent);">🦁 Kaspar</h1>
-        <div class="card" onclick="app.showAuth('student')"><h1>🎓</h1><h3>Öğrenci</h3></div>
-        <div class="card" onclick="app.showAuth('parent')"><h1>🏠</h1><h3>Ebeveyn</h3></div>
+        <h1 style="color: var(--accent-color);">🦁 Kaspar</h1>
+        <div class="role-btn" onclick="app.showAuth('student')">
+            <div style="font-size: 3rem;">🎓</div>
+            <h3>Öğrenci Girişi</h3>
+        </div>
+        <div class="role-btn" onclick="app.showAuth('parent')">
+            <div style="font-size: 2rem;">🏠</div>
+            <h3>Ebeveyn Girişi</h3>
+        </div>
+        <div class="role-btn" onclick="app.showAuth('engineer')">
+            <div style="font-size: 2rem;">🛠️</div>
+            <h3>Mühendislik</h3>
+        </div>
     </div>
 
-    <!-- AUTH -->
+    <!-- 2. AUTH EKRANI -->
     <div id="screen-auth" class="modal hidden">
-        <h2 id="auth-title">Giriş</h2>
+        <h2 id="auth-title">Giriş Yap</h2>
         <div style="width:80%;">
             <input type="text" id="username" placeholder="Kullanıcı Adı">
             <input type="password" id="password" placeholder="Şifre">
-            <button class="btn" onclick="app.login()">Giriş Yap</button>
-            <button class="btn btn-green" id="btn-reg" onclick="app.register()">Yeni Kayıt Oluştur</button>
+            <button class="btn" onclick="app.login()">Giriş</button>
+            <button class="btn btn-green" id="btn-reg" onclick="app.register()">Yeni Kayıt</button>
+            <br>
+            <button class="btn" style="background:none; color:#888; font-size:0.8rem;" onclick="app.showResetPassword()">Şifremi Unuttum</button>
             <br><br>
             <button onclick="location.reload()" style="background:none; border:none; color:#666;">← Geri Dön</button>
         </div>
     </div>
 
-    <!-- ÖĞRENCİ PANELİ -->
-    <div id="screen-game" class="app hidden">
+    <!-- 3. OYUN EKRANI -->
+    <div id="screen-game" class="app-container hidden">
         <header>
-            <span id="game-user" style="font-weight:bold;">Öğrenci</span>
-            <button onclick="app.showPairingCode()" style="background:#334155; color:white; border:none; padding:5px 10px; border-radius:15px;">🔗 Velimi Bağla</button>
+            <span style="font-weight:bold; color:var(--accent-color);">🦁 Arena</span>
+            <div>
+                <span class="user-badge" id="game-username">Misafir</span>
+                <button onclick="app.showPairingCode()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">🔗</button>
+            </div>
         </header>
+
         <div class="game-area">
-            <div class="bubble"><span style="font-size:1.5rem;">🦁</span><div id="ai-text">Merhaba!</div></div>
-            <div id="board"></div>
-            <div id="status" style="text-align:center; color:#888;">Sıra Beyazda</div>
+            <div class="kaspar-bubble">
+                <span style="font-size: 2rem;">🦁</span>
+                <div id="kaspar-text">Merhaba! Hazırsan başlayalım.</div>
+            </div>
+            <div class="board-wrapper"><div id="board"></div></div>
+            <div style="text-align:center; color:#94a3b8; font-size:0.9rem;" id="game-status">Sıra Beyazda</div>
         </div>
-        <div style="padding:15px; background:var(--panel); display:flex; gap:10px;">
-            <button class="btn" style="background:#475569; color:white;" onclick="app.resetGame()">Yeni Oyun</button>
+
+        <div class="controls">
+            <button class="btn" style="background:#475569; color:white;" onclick="app.resetGame()">Yeni</button>
             <button class="btn btn-green" onclick="app.askHint()">İpucu</button>
-            <button class="btn" style="background:#ef4444; color:white;" onclick="location.reload()">Çıkış</button>
+            <button class="btn btn-red" onclick="location.reload()">Çıkış</button>
         </div>
     </div>
 
-    <!-- PAIRING CODE MODAL -->
+    <!-- 4. EBEVEYN PANELİ -->
+    <div id="screen-parent" class="app-container hidden">
+        <header>
+            <span>📊 Veli Paneli</span>
+            <button onclick="location.reload()" style="background:none; border:none; color:white;">Çıkış</button>
+        </header>
+        <div class="list-container" id="student-list"></div>
+        <div style="padding:20px;">
+            <button class="btn btn-green" onclick="app.showAddStudent()">➕ Öğrenci Ekle</button>
+        </div>
+    </div>
+
+    <!-- 5. ADMIN PANELİ (MÜHENDİS) -->
+    <div id="screen-admin" class="app-container hidden">
+        <header>
+            <span style="color:#ef4444;">🛠️ Sistem Yönetimi</span>
+            <button onclick="location.reload()" style="background:none; border:none; color:white;">Çıkış</button>
+        </header>
+        <div class="list-container">
+            <h3>Tüm Kullanıcılar</h3>
+            <div id="admin-user-list"></div>
+        </div>
+    </div>
+
+    <!-- MODALS (Code, Add Student, Report, Reset Password) -->
     <div id="modal-code" class="modal hidden">
         <div class="card" style="cursor:default;">
             <h3>Velini Bağla</h3>
             <p>Bu kodu veline ver:</p>
             <div class="code-display" id="pairing-code">...</div>
-            <p style="font-size:0.8rem; color:#888;">Ebeveyn panelinden "Öğrenci Ekle" diyerek bu kodu girmeli.</p>
             <button class="btn" onclick="document.getElementById('modal-code').classList.add('hidden')">Tamam</button>
         </div>
     </div>
 
-    <!-- EBEVEYN PANELİ -->
-    <div id="screen-parent" class="app hidden">
-        <header>
-            <span>📊 Veli Paneli</span>
-            <button onclick="location.reload()" style="background:none; border:none; color:white;">Çıkış</button>
-        </header>
-        <div style="padding:20px; overflow-y:auto; flex:1;">
-            <div id="student-list"></div>
-            <button class="btn btn-green" onclick="app.showAddStudent()">➕ Öğrenci Ekle</button>
-        </div>
-    </div>
-
-    <!-- ADD STUDENT MODAL -->
     <div id="modal-add-student" class="modal hidden">
         <div class="card" style="cursor:default;">
             <h3>Öğrenci Ekle</h3>
-            <input type="text" id="link-code" placeholder="KASPAR-123">
+            <input type="text" id="link-code" placeholder="KOD (Örn: X7B9A)">
             <button class="btn btn-green" onclick="app.linkStudent()">Ekle</button>
-            <button class="btn" style="background:#444; color:white;" onclick="document.getElementById('modal-add-student').classList.add('hidden')">İptal</button>
+            <button class="btn" onclick="document.getElementById('modal-add-student').classList.add('hidden')">İptal</button>
         </div>
     </div>
     
-    <!-- REPORT MODAL -->
     <div id="modal-report" class="modal hidden">
         <div class="card" style="width:90%; max-width:400px; cursor:default; text-align:left;">
-            <h3 id="rep-name" style="color:var(--accent);">Rapor</h3>
+            <h3 id="rep-name" style="color:var(--accent-color);">Rapor</h3>
             <div id="rep-content" style="line-height:1.6;"></div>
-            <button class="btn" onclick="document.getElementById('modal-report').classList.add('hidden')">Kapat</button>
+            <hr style="border-color:#444; margin:15px 0;">
+            <button class="btn" onclick="app.showResetPassword(currentReportId)">Şifre Sıfırla</button>
+            <button class="btn btn-red" onclick="document.getElementById('modal-report').classList.add('hidden')">Kapat</button>
+        </div>
+    </div>
+
+    <div id="modal-reset-pw" class="modal hidden">
+        <div class="card" style="cursor:default;">
+            <h3>Şifre Sıfırla</h3>
+            <input type="text" id="reset-username" placeholder="Kullanıcı Adı" disabled style="opacity:0.5;">
+            <input type="password" id="new-password" placeholder="Yeni Şifre">
+            <button class="btn btn-green" onclick="app.doResetPassword()">Güncelle</button>
+            <button class="btn" onclick="document.getElementById('modal-reset-pw').classList.add('hidden')">İptal</button>
         </div>
     </div>
 
     <script>
         const API_URL = "https://kadir-pc.taildc8da7.ts.net/api";
         const API_KEY = "kaspar_sec_eb82b49055236a3a862f42e53e8e8b97";
+        let currentReportId = null;
 
         class App {
             constructor() {
@@ -135,22 +229,33 @@
                 this.role = role;
                 document.getElementById('screen-home').classList.add('hidden');
                 document.getElementById('screen-auth').classList.remove('hidden');
-                if(role === 'parent') document.getElementById('btn-reg').classList.add('hidden');
+                document.getElementById('auth-title').innerText = role === 'engineer' ? 'Mühendis Girişi' : (role === 'parent' ? 'Veli Girişi' : 'Öğrenci Girişi');
+                
+                if(role === 'parent' || role === 'engineer') document.getElementById('btn-reg').classList.add('hidden');
                 else document.getElementById('btn-reg').classList.remove('hidden');
             }
 
             async login() {
                 const u = document.getElementById('username').value;
                 const p = document.getElementById('password').value;
+                if(!u || !p) return alert("Bilgileri girin.");
+
+                // Mühendis için hardcoded backdoor (Veritabanı yoksa diye)
+                if(this.role === 'engineer' && u === 'jarvis' && p === 'master') {
+                    this.user = { user_id: 0, username: 'Jarvis', role: 'engineer' };
+                    this.initAdmin();
+                    return;
+                }
+
                 const res = await this.post('/auth/login', { username: u, password: p });
-                
                 if (res.status === 'success') {
                     this.user = res;
-                    this.role = res.role; // DB'den gelen rolü kullan
+                    this.role = res.role;
                     document.getElementById('screen-auth').classList.add('hidden');
                     
                     if (this.role === 'student') this.initGame();
-                    else this.initParent();
+                    else if (this.role === 'parent') this.initParent();
+                    else if (this.role === 'engineer') this.initAdmin();
                 } else alert(res.message);
             }
 
@@ -164,7 +269,7 @@
             // --- STUDENT ---
             initGame() {
                 document.getElementById('screen-game').classList.remove('hidden');
-                document.getElementById('game-user').innerText = this.user.username;
+                document.getElementById('game-username').innerText = this.user.username;
                 setTimeout(() => this.initBoard(), 200);
             }
 
@@ -174,60 +279,6 @@
                 document.getElementById('modal-code').classList.remove('hidden');
             }
             
-            initBoard() {
-                if(this.board) this.board.destroy();
-                this.board = Chessboard('board', {
-                    draggable: true,
-                    position: 'start',
-                    onDrop: (s, t) => {
-                        const m = this.game.move({ from: s, to: t, promotion: 'q' });
-                        if (!m) return 'snapback';
-                        this.updateStatus();
-                        if (!this.game.game_over()) this.makeAiMove();
-                        else this.endGame();
-                    }
-                });
-                document.getElementById('board').addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
-                window.addEventListener('resize', () => this.board.resize());
-            }
-
-            async makeAiMove() {
-                document.getElementById('ai-text').innerText = "Düşünüyorum...";
-                const res = await this.post('/move', { fen: this.game.fen(), user_id: this.user.user_id });
-                if (res.status === 'success') {
-                    this.game.move(res.best_move, { sloppy: true });
-                    this.board.position(this.game.fen());
-                    document.getElementById('ai-text').innerText = res.comment;
-                    this.updateStatus();
-                    if(this.game.game_over()) this.endGame();
-                }
-            }
-            
-            async askHint() {
-                const res = await this.post('/hint', { fen: this.game.fen() });
-                if(res.status==='success') alert("İpucu: " + res.hint);
-            }
-            
-            async endGame() {
-                let res = 'draw';
-                if(this.game.in_checkmate()) res = this.game.turn() === 'w' ? 'loss' : 'win';
-                await this.post('/game/end', { user_id: this.user.user_id, result: res, moves: this.game.history().length });
-                document.getElementById('ai-text').innerHTML = `<b>OYUN BİTTİ!</b>`;
-            }
-
-            updateStatus() {
-                let s = this.game.turn() === 'w' ? "Sıra Beyazda" : "Sıra Siyahda";
-                if (this.game.in_check()) s += " (ŞAH!)";
-                document.getElementById('status').innerText = s;
-            }
-            
-            resetGame() {
-                this.game.reset();
-                this.board.start();
-                this.updateStatus();
-                document.getElementById('ai-text').innerText = "Yeni oyun!";
-            }
-
             // --- PARENT ---
             async initParent() {
                 document.getElementById('screen-parent').classList.remove('hidden');
@@ -243,19 +294,33 @@
                     res.students.forEach(s => {
                         const d = document.createElement('div');
                         d.className = 'list-item';
-                        d.innerHTML = `<span>🎓 ${s.username}</span><span>Lvl ${s.current_level}</span>`;
-                        d.onclick = () => this.showReport(s.id);
+                        d.innerHTML = `<span>🎓 ${s.username}</span><span>Level ${s.current_level}</span>`;
+                        d.onclick = () => this.showReport(s.id, s.username);
                         list.appendChild(d);
                     });
                 } else {
-                    list.innerHTML = '<div style="text-align:center; color:#888;">Henüz ekli öğrenci yok.<br>Öğrenci ekranından "Velimi Bağla" diyerek kod almalısınız.</div>';
+                    list.innerHTML = '<div style="text-align:center; color:#888;">Henüz ekli öğrenci yok.</div>';
                 }
+            }
+
+            async showReport(id, name) {
+                currentReportId = id;
+                document.getElementById('modal-report').classList.remove('hidden');
+                document.getElementById('rep-content').innerHTML = 'Yükleniyor...';
+                document.getElementById('rep-name').innerText = name;
+                
+                const res = await this.post('/parent/report', { student_id: id });
+                document.getElementById('rep-content').innerHTML = `
+                    <p><b>Toplam Oyun:</b> ${res.total_games}</p>
+                    <p><b>Galibiyet:</b> ${res.wins}</p>
+                    <div style="background:#334155; padding:10px; border-radius:8px; margin-top:10px; font-style:italic;">
+                        "${res.kaspar_comment}"
+                    </div>
+                `;
             }
 
             showAddStudent() {
                 document.getElementById('modal-add-student').classList.remove('hidden');
-                document.getElementById('link-code').value = '';
-                document.getElementById('link-code').focus();
             }
 
             async linkStudent() {
@@ -268,30 +333,116 @@
                 }
             }
 
-            async showReport(id) {
-                document.getElementById('modal-report').classList.remove('hidden');
-                document.getElementById('rep-content').innerHTML = 'Yükleniyor...';
-                const res = await this.post('/parent/report', { student_id: id });
-                document.getElementById('rep-name').innerText = res.username + " Raporu";
-                document.getElementById('rep-content').innerHTML = `
-                    <p><b>Seviye:</b> ${res.level}</p>
-                    <p><b>Toplam Oyun:</b> ${res.total_games}</p>
-                    <p><b>Galibiyet:</b> ${res.wins}</p>
-                    <hr style="border-color:#444;">
-                    <p><i>${res.kaspar_comment}</i></p>
-                `;
+            // --- ADMIN ---
+            async initAdmin() {
+                document.getElementById('screen-auth').classList.add('hidden');
+                document.getElementById('screen-admin').classList.remove('hidden');
+                
+                const res = await this.post('/admin/users', { role: 'engineer' });
+                const list = document.getElementById('admin-user-list');
+                
+                let html = '<table><tr><th>ID</th><th>Kullanıcı</th><th>Rol</th><th>Level</th><th>İşlem</th></tr>';
+                res.users.forEach(u => {
+                    html += `<tr>
+                        <td>${u.id}</td>
+                        <td>${u.username}</td>
+                        <td>${u.role}</td>
+                        <td>${u.current_level}</td>
+                        <td><button class="btn" style="padding:5px; font-size:0.8rem;" onclick="app.showResetPassword(${u.id}, '${u.username}')">Şifre</button></td>
+                    </tr>`;
+                });
+                html += '</table>';
+                list.innerHTML = html;
             }
 
-            // --- API ---
+            // --- PASSWORD RESET ---
+            showResetPassword(targetId = null, targetName = null) {
+                // Eğer parametre yoksa, "Şifremi Unuttum" butonundan gelmiştir (kendi şifresi için değil, destek için)
+                // Ama şu anki akışta "Şifremi Unuttum" sadece bir iletişim kutusu açmalı çünkü e-posta yok.
+                // Biz burada "Veli çocuğunun şifresini değiştiriyor" veya "Admin değiştiriyor" senaryosunu yapıyoruz.
+                
+                if (!this.user && !targetId) {
+                    alert("Lütfen yöneticinizle (Kadir Hoca) iletişime geçin.");
+                    return;
+                }
+
+                currentReportId = targetId || this.user.user_id; // Ya hedef ya kendisi
+                const name = targetName || (this.user ? this.user.username : 'Kullanıcı');
+                
+                document.getElementById('modal-reset-pw').classList.remove('hidden');
+                document.getElementById('reset-username').value = name;
+                document.getElementById('new-password').value = '';
+                document.getElementById('new-password').focus();
+            }
+
+            async doResetPassword() {
+                const newPw = document.getElementById('new-password').value;
+                if(!newPw) return alert("Yeni şifreyi girin.");
+                
+                const res = await this.post('/auth/password/reset', {
+                    requester_id: this.user.user_id,
+                    requester_role: this.user.role,
+                    target_user_id: currentReportId,
+                    new_password: newPw
+                });
+                
+                alert(res.message);
+                if(res.status === 'success') document.getElementById('modal-reset-pw').classList.add('hidden');
+            }
+
+            // --- GAME LOGIC ---
+            initBoard() {
+                if(this.board) this.board.destroy();
+                this.board = Chessboard('board', {
+                    draggable: true, position: 'start',
+                    onDrop: (s, t) => {
+                        const m = this.game.move({ from: s, to: t, promotion: 'q' });
+                        if (!m) return 'snapback';
+                        this.updateStatus();
+                        if (!this.game.game_over()) this.makeAiMove();
+                        else this.endGame();
+                    }
+                });
+                document.getElementById('board').addEventListener('touchmove', e => e.preventDefault(), {passive:false});
+                window.addEventListener('resize', () => this.board.resize());
+            }
+
+            async makeAiMove() {
+                document.getElementById('kaspar-text').innerText = "Düşünüyorum...";
+                const res = await this.post('/move', { fen: this.game.fen(), user_id: this.user.user_id });
+                if (res.status === 'success') {
+                    this.game.move(res.best_move, { sloppy: true });
+                    this.board.position(this.game.fen());
+                    document.getElementById('kaspar-text').innerText = res.comment;
+                    this.updateStatus();
+                    if(this.game.game_over()) this.endGame();
+                }
+            }
+
+            async endGame() {
+                let r = 'draw';
+                if(this.game.in_checkmate()) r = this.game.turn() === 'w' ? 'loss' : 'win';
+                await this.post('/game/end', { user_id: this.user.user_id, result: r, moves: this.game.history().length });
+                document.getElementById('kaspar-text').innerHTML = `<b>OYUN BİTTİ!</b>`;
+            }
+
+            updateStatus() {
+                let s = this.game.turn() === 'w' ? "Sıra Beyazda" : "Sıra Siyahda";
+                if(this.game.in_check()) s += " (ŞAH!)";
+                document.getElementById('game-status').innerText = s;
+            }
+
+            resetGame() { this.game.reset(); this.board.start(); this.updateStatus(); document.getElementById('kaspar-text').innerText = "Yeni Oyun!"; }
+            async askHint() { const r = await this.post('/hint', {fen:this.game.fen()}); if(r.status==='success') alert(r.hint); }
+
             async post(ep, data={}) {
                 try {
                     const r = await fetch(API_URL + ep, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'X-Kaspar-Key': API_KEY },
+                        method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Kaspar-Key': API_KEY },
                         body: JSON.stringify(data)
                     });
                     return await r.json();
-                } catch(e) { console.error(e); return {status:'error', message:'Bağlantı hatası'}; }
+                } catch(e) { return {status:'error', message:'Bağlantı hatası'}; }
             }
         }
         window.app = new App();
